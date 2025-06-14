@@ -73,6 +73,7 @@ Celem projektu było stworzenie prostej, ale funkcjonalnej aplikacji webowej bez
 # Opis Funkcjonalności Aplikacji:
 
 2.1    **Autentykacja Użytkowników**
+
 Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejestrowanych. Proces obejmuje:
 **Rejestracja:** Formularz zbierający imię, nazwisko, email oraz hasło (z potwierdzeniem). Hasła są bezpiecznie hashowane przed zapisem do bazy. Zaimplementowano dynamiczne sprawdzanie dostępności adresu email po stronie klienta (JavaScript/Fetch API) oraz walidację po stronie serwera.
 
