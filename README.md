@@ -6,14 +6,13 @@
     - **Strona główna:** [http://localhost:8080](http://localhost:8080)
     - **pgAdmin (zarządzanie bazą):** [http://localhost:5050](http://localhost:5050)
 
-2.  **Dane logowania (opcjonalnie):**
-    Możesz podać przykładowe dane do logowania, aby ułatwić testowanie.
-    - **Admin:** `admin@example.com` / `admin123`
-    - **User:** `user@example.com` / `user123`
+2.  **Dane logowania:**
+    - **Admin:** `admin@admin.pl` / `admin1`
+    - **User:** `michal@wp.pl` / `michal`
 
 ## Opis Projektu
 
-"Toolsy" to projekt studencki aplikacji internetowej typu wypożyczalnia narzędzi. Aplikacja umożliwia przeglądanie dostępnych narzędzi, rejestrację i logowanie użytkowników, a także zarządzanie katalogiem narzędzi i kategoriami przez administratora. Zalogowani użytkownicy mogą wypożyczać narzędzia oraz zarządzać swoimi wypożyczeniami (w tym dokonywać zwrotów).
+"Toolsy" to projekt aplikacji internetowej typu wypożyczalnia narzędzi. Aplikacja umożliwia przeglądanie dostępnych narzędzi, rejestrację i logowanie użytkowników, a także zarządzanie katalogiem narzędzi i kategoriami przez administratora. Zalogowani użytkownicy mogą wypożyczać narzędzia oraz zarządzać swoimi wypożyczeniami (w tym dokonywać zwrotów).
 
 Celem projektu było stworzenie prostej, ale funkcjonalnej aplikacji webowej bez użycia frameworków PHP po stronie backendu, z wykorzystaniem czystego PHP, HTML, CSS i JavaScript, oraz bazy danych PostgreSQL. Aplikacja jest skonteneryzowana przy użyciu Docker.
 
