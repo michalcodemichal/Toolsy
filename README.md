@@ -135,7 +135,7 @@ Dostępny dla zalogowanych użytkowników:
 
 ### 2.5 Panel Administratora
 
-Dostępny tylko dla użytkowników z rolą "admin", umożliwia zarządzanie (operacje CRUD):
+Dostępny tylko dla użytkowników z rolą "admin", umożliwia zarządzanie:
 
 ●	**Kategoriami Narzędzi:** Dodawanie nowych kategorii, przeglądanie listy, edycja istniejących oraz ich usuwanie. 
 
@@ -162,6 +162,7 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 ●	Konfiguracja (config/): Plik database.php z danymi połączenia do bazy.
 
 ●	Punkt wejściowy (public/index.php): Obsługuje wszystkie przychodzące żądania, inicjalizuje sesję, definiuje stałe, ładuje kontrolery i kieruje do odpowiednich akcji.
+
 ●	Zasoby publiczne (public/): Folder css/style.css dla stylów.
 
 
@@ -176,6 +177,7 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 
 
 **Zaawansowane funkcje:**
+
 ○	Widok SQL: Stworzono widok AktywneWypozyczeniaInfo do prezentacji aktywnych wypożyczeń.
 
 ○	Funkcja SQL: Stworzono funkcję ObliczDniWypozyczenia do kalkulacji długości wypożyczenia.
