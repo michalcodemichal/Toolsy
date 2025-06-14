@@ -1,0 +1,67 @@
+
+
+services:
+  php:
+    build: ./docker/php
+    container_name: toolrental_php
+    volumes:
+      - ./public:/var/www/html/public
+      - ./src:/var/www/html/src
+      - ./views:/var/www/html/views
+      - ./config:/var/www/html/config
+    working_dir: /var/www/html
+    networks:
+      - toolrental_network
+
+
+  nginx:
+    image: nginx:alpine
+    container_name: toolrental_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html/public
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - toolrental_network
+
+
+  db:
+    image: postgres:15-alpine
+    container_name: toolrental_db
+    environment:
+      POSTGRES_DB: toolsy_db
+      POSTGRES_USER: toolsy_user
+      POSTGRES_PASSWORD: TwojeSuperSilneHaslo
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - toolrental_network
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: toolrental_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - toolrental_network
+
+networks:
+  toolrental_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  pgadmin_data:
