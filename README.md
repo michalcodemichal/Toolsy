@@ -80,8 +80,14 @@ Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejes
 
 ![image](https://github.com/user-attachments/assets/0323c702-b996-48dc-b22c-5b7be9bf2937)
 
+**Logowanie:** Formularz email i hasła. Aplikacja weryfikuje dane z bazą i w przypadku sukcesu tworzy sesję użytkownika.
+
+![image](https://github.com/user-attachments/assets/2490165e-198b-4f03-a7f4-a8163d1b58e6)
+
+**Wylogowywanie:** Bezpieczne zakończenie sesji użytkownika.
+
+![image](https://github.com/user-attachments/assets/ca066e65-e4c3-42cf-87e2-87ad2ed61e0b)
 
 
-
-
+2.2    **Role Użytkowników**
 
