@@ -80,9 +80,11 @@ Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejes
 
 ![image](https://github.com/user-attachments/assets/0323c702-b996-48dc-b22c-5b7be9bf2937)
 
+
 **Logowanie:** Formularz email i hasła. Aplikacja weryfikuje dane z bazą i w przypadku sukcesu tworzy sesję użytkownika.
 
 ![image](https://github.com/user-attachments/assets/2490165e-198b-4f03-a7f4-a8163d1b58e6)
+
 
 **Wylogowywanie:** Bezpieczne zakończenie sesji użytkownika.
 
@@ -91,3 +93,40 @@ Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejes
 
 2.2    **Role Użytkowników**
 
+System rozróżnia dwie role:
+
+●	**Użytkownik (user):** Może przeglądać narzędzia, wypożyczać je, przeglądać swoje aktywne i historyczne wypożyczenia oraz dokonywać zwrotów.
+●	**Administrator (admin):** Posiada wszystkie uprawnienia zwykłego użytkownika oraz dostęp do panelu administracyjnego, gdzie może zarządzać kategoriami narzędzi i samymi narzędziami.
+
+
+2.3    **Publiczny katalog narzędzi**
+
+Dostępny dla wszystkich odwiedzających, umożliwia:
+
+●	Przeglądanie listy narzędzi: Narzędzia wyświetlane są w formie kart, prezentując zdjęcie (lub placeholder), nazwę, kategorię, cenę za dobę oraz aktualną dostępność. Zaimplementowano filtrowanie narzędzi po kategoriach. 
+
+![image](https://github.com/user-attachments/assets/5263a2c2-ff5e-49f2-9058-8cbc3ebd7aea)
+
+
+●	Szczegóły narzędzia: Po kliknięciu na narzędzie użytkownik widzi jego pełny opis, większe zdjęcie oraz, jeśli jest zalogowany i narzędzie jest dostępne, opcję wypożyczenia. 
+
+![image](https://github.com/user-attachments/assets/b6b2112f-5bfb-46a4-ade2-c53ec82dda63)
+
+
+2.4 System wypożyczeń
+
+Dostępny dla zalogowanych użytkowników:
+
+●	Proces wypożyczenia: Na stronie szczegółów narzędzia użytkownik wybiera planowaną datę zwrotu. Po potwierdzeniu, narzędzie zmienia status na "niedostępne", a informacja o wypożyczeniu (kto, co, od kiedy, do kiedy) jest zapisywana w bazie danych. Operacje te są objęte transakcją bazodanową. 
+
+![image](https://github.com/user-attachments/assets/7133b79b-5484-4045-9adb-afd86663f531)
+
+
+●	Moje Wypożyczenia: Zalogowany użytkownik ma dostęp do panelu, gdzie widzi listę swoich wypożyczeń (aktywnych i zakończonych) wraz ze szczegółami (nazwa narzędzia, daty, status, obliczony koszt po zwrocie). 
+
+![image](https://github.com/user-attachments/assets/381ffe01-6dad-44c6-9efe-c0cd0811e76c)
+
+
+●	Zwrot narzędzia: Użytkownik może "zwrócić" aktywne wypożyczenie. System zapisuje datę rzeczywistego zwrotu, oblicza całkowity koszt wypożyczenia i zmienia status narzędzia na "dostępne". Operacje te również są objęte transakcją.
+
+![image](https://github.com/user-attachments/assets/a41b7691-b4ef-4a06-ab93-854332204181)
