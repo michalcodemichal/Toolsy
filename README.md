@@ -68,3 +68,7 @@ Celem projektu było stworzenie prostej, ale funkcjonalnej aplikacji webowej bez
 - Haszowanie haseł użytkowników (funkcje `password_hash()` i `password_verify()`).
 - Obsługa sesji PHP.
 - Transakcje bazodanowe przy operacjach modyfikujących wiele tabel (np. proces wypożyczenia/zwrotu).
+
+
+![image](https://github.com/user-attachments/assets/e6a2ab5a-d90c-417d-8f52-31f02b753cdc)
+
