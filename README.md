@@ -147,21 +147,26 @@ Dostępny tylko dla użytkowników z rolą "admin", umożliwia zarządzanie (ope
 ![image](https://github.com/user-attachments/assets/542aeefb-56dc-4615-8ea2-90d62d16e1ee)
 
 
-3. Architektura i użyte technologie
+### 3. Architektura i użyte technologie
 
-3.1 Struktura aplikacji
+## 3.1 Struktura aplikacji
 
 Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parametr action w URL). Logika backendu została częściowo zorganizowana z użyciem uproszczonego wzorca MVC:
 
 ●	Modele (src/Models/): Klasy (User.php, Category.php, Tool.php, Rental.php) odpowiedzialne za interakcję z bazą danych (operacje CRUD, pobieranie danych). Wykorzystują PDO i prepared statements.
+
 ●	Widoki (views/): Pliki PHP zawierające kod HTML do prezentacji danych użytkownikowi.
+
 ●	Kontrolery (src/Controllers/): Klasy (AuthController.php, CategoryController.php, ToolController.php, RentalController.php) zarządzające logiką aplikacji, przetwarzające żądania, komunikujące się z modelami i wybierające odpowiednie widoki.
+
 ●	Konfiguracja (config/): Plik database.php z danymi połączenia do bazy.
+
 ●	Punkt wejściowy (public/index.php): Obsługuje wszystkie przychodzące żądania, inicjalizuje sesję, definiuje stałe, ładuje kontrolery i kieruje do odpowiednich akcji.
 ●	Zasoby publiczne (public/): Folder css/style.css dla stylów.
 
 
-3.2 Baza Danych PostgreSQL
+
+## 3.2 Baza Danych PostgreSQL
 
 ●	**Schemat:** Zaprojektowano relacyjną bazę danych składającą się z 5 tabel: Uzytkownicy, KategorieNarzędzi, Narzędzia, Wypozyczenia, LogiDostepnosciNarzędzi.
 
@@ -181,7 +186,7 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 
 ![image](https://github.com/user-attachments/assets/618999c7-7ded-4f04-8439-4af6f36dc440)
 
-3.3 Konteneryzacja Docker
+## 3.3 Konteneryzacja Docker
 
 Aplikacja jest w pełni skonteneryzowana przy użyciu Docker i Docker Compose. Plik docker-compose.yml definiuje następujące serwisy:
 
