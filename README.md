@@ -70,11 +70,12 @@ Celem projektu było stworzenie prostej, ale funkcjonalnej aplikacji webowej bez
 - Transakcje bazodanowe przy operacjach modyfikujących wiele tabel (np. proces wypożyczenia/zwrotu).
 
 
-# Opis Funkcjonalności Aplikacji:
+## Opis Funkcjonalności Aplikacji:
 
 2.1    **Autentykacja Użytkowników**
 
 Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejestrowanych. Proces obejmuje:
+
 **Rejestracja:** Formularz zbierający imię, nazwisko, email oraz hasło (z potwierdzeniem). Hasła są bezpiecznie hashowane przed zapisem do bazy. Zaimplementowano dynamiczne sprawdzanie dostępności adresu email po stronie klienta (JavaScript/Fetch API) oraz walidację po stronie serwera.
 
 ![image](https://github.com/user-attachments/assets/0323c702-b996-48dc-b22c-5b7be9bf2937)
