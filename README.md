@@ -172,8 +172,11 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 
 **Zaawansowane funkcje:**
 ○	Widok SQL: Stworzono widok AktywneWypozyczeniaInfo do prezentacji aktywnych wypożyczeń.
+
 ○	Funkcja SQL: Stworzono funkcję ObliczDniWypozyczenia do kalkulacji długości wypożyczenia.
+
 ○	Wyzwalacz SQL: Zaimplementowano wyzwalacz Trigger_PoZmianieDostepnosciNarzędzia wraz z funkcją LogujZmianeDostepnosciNarzędzia do automatycznego logowania zmian statusu dostępności narzędzi w tabeli LogiDostepnosciNarzędzi.
+
 ○	Transakcje: Użyto transakcji bazodanowych w procesach wypożyczania i zwrotu narzędzi dla zapewnienia spójności danych. 
 
 ![image](https://github.com/user-attachments/assets/618999c7-7ded-4f04-8439-4af6f36dc440)
@@ -183,7 +186,10 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 Aplikacja jest w pełni skonteneryzowana przy użyciu Docker i Docker Compose. Plik docker-compose.yml definiuje następujące serwisy:
 
 ●	php: Kontener z PHP-FPM (wersja 8.2.11-fpm-alpine3.18) i wymaganymi rozszerzeniami (np. pdo_pgsql).
+
 ●	nginx: Serwer WWW Nginx skonfigurowany do współpracy z PHP-FPM.
+
 ●	db: Serwer bazy danych PostgreSQL (wersja 15-alpine).
+
 ●	pgadmin: Narzędzie pgAdmin 4 do zarządzania bazą danych. Wolumeny Docker są używane do persystencji danych PostgreSQL i pgAdmin oraz do mapowania kodu aplikacji do kontenerów, co umożliwia dewelopment na żywo.
 
