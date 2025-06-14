@@ -72,7 +72,7 @@ Celem projektu było stworzenie prostej, ale funkcjonalnej aplikacji webowej bez
 
 ## Opis Funkcjonalności Aplikacji:
 
-2.1    **Autentykacja Użytkowników**
+### 2.1    **Autentykacja Użytkowników**
 
 Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejestrowanych. Proces obejmuje:
 
@@ -91,7 +91,7 @@ Umożliwia nowym użytkownikom założenie konta oraz logowanie dla już zarejes
 ![image](https://github.com/user-attachments/assets/ca066e65-e4c3-42cf-87e2-87ad2ed61e0b)
 
 
-2.2    **Role Użytkowników**
+### 2.2    **Role Użytkowników**
 
 System rozróżnia dwie role:
 
@@ -100,7 +100,7 @@ System rozróżnia dwie role:
 ●	**Administrator (admin):** Posiada wszystkie uprawnienia zwykłego użytkownika oraz dostęp do panelu administracyjnego, gdzie może zarządzać kategoriami narzędzi i samymi narzędziami.
 
 
-2.3    **Publiczny katalog narzędzi**
+### 2.3    **Publiczny katalog narzędzi**
 
 Dostępny dla wszystkich odwiedzających, umożliwia:
 
@@ -114,7 +114,7 @@ Dostępny dla wszystkich odwiedzających, umożliwia:
 ![image](https://github.com/user-attachments/assets/b6b2112f-5bfb-46a4-ade2-c53ec82dda63)
 
 
-2.4 System wypożyczeń
+### 2.4 System wypożyczeń
 
 Dostępny dla zalogowanych użytkowników:
 
@@ -133,7 +133,7 @@ Dostępny dla zalogowanych użytkowników:
 ![image](https://github.com/user-attachments/assets/a41b7691-b4ef-4a06-ab93-854332204181)
 
 
-2.5 Panel Administratora
+### 2.5 Panel Administratora
 
 Dostępny tylko dla użytkowników z rolą "admin", umożliwia zarządzanie (operacje CRUD):
 
@@ -147,9 +147,9 @@ Dostępny tylko dla użytkowników z rolą "admin", umożliwia zarządzanie (ope
 ![image](https://github.com/user-attachments/assets/542aeefb-56dc-4615-8ea2-90d62d16e1ee)
 
 
-### 3. Architektura i użyte technologie
+## 3. Architektura i użyte technologie
 
-## 3.1 Struktura aplikacji
+### 3.1 Struktura aplikacji
 
 Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parametr action w URL). Logika backendu została częściowo zorganizowana z użyciem uproszczonego wzorca MVC:
 
@@ -166,7 +166,7 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 
 
 
-## 3.2 Baza Danych PostgreSQL
+### 3.2 Baza Danych PostgreSQL
 
 ●	**Schemat:** Zaprojektowano relacyjną bazę danych składającą się z 5 tabel: Uzytkownicy, KategorieNarzędzi, Narzędzia, Wypozyczenia, LogiDostepnosciNarzędzi.
 
@@ -186,7 +186,7 @@ Aplikacja została zbudowana w oparciu o własny, prosty system routingu (parame
 
 ![image](https://github.com/user-attachments/assets/618999c7-7ded-4f04-8439-4af6f36dc440)
 
-## 3.3 Konteneryzacja Docker
+### 3.3 Konteneryzacja Docker
 
 Aplikacja jest w pełni skonteneryzowana przy użyciu Docker i Docker Compose. Plik docker-compose.yml definiuje następujące serwisy:
 
