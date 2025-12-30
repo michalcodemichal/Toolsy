@@ -1,0 +1,108 @@
+.tool-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.tool-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tool-card-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #ecf0f1;
+}
+
+.tool-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tool-card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #95a5a6;
+  background-color: #ecf0f1;
+}
+
+.tool-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tool-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.tool-card-category {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.tool-card-description {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tool-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.tool-card-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.tool-card-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tool-card-status-available {
+  background-color: #d5f4e6;
+  color: #27ae60;
+}
+
+.tool-card-status-rented {
+  background-color: #fadbd8;
+  color: #e74c3c;
+}
+
+.tool-card-status-maintenance {
+  background-color: #fef5e7;
+  color: #f39c12;
+}
+
+.tool-card-status-unavailable {
+  background-color: #ebedef;
+  color: #7f8c8d;
+}
+
