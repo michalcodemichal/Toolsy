@@ -1,0 +1,147 @@
+.tool-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.tool-details-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.tool-details-image {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #ecf0f1;
+}
+
+.tool-details-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tool-details-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #95a5a6;
+}
+
+.tool-details-info h1 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.tool-details-category {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+}
+
+.tool-details-description {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.tool-details-meta {
+  margin-bottom: 2rem;
+}
+
+.tool-details-price {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.price-label {
+  color: #7f8c8d;
+}
+
+.price-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.tool-details-quantity {
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.tool-details-status {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.tool-status-available {
+  background-color: #d5f4e6;
+  color: #27ae60;
+}
+
+.tool-status-rented {
+  background-color: #fadbd8;
+  color: #e74c3c;
+}
+
+.tool-status-maintenance {
+  background-color: #fef5e7;
+  color: #f39c12;
+}
+
+.tool-status-unavailable {
+  background-color: #ebedef;
+  color: #7f8c8d;
+}
+
+.tool-details-actions {
+  margin-top: 2rem;
+}
+
+.rental-form-card {
+  margin-top: 1rem;
+}
+
+.rental-form-card h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.rental-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.login-prompt {
+  margin-top: 1rem;
+  color: #7f8c8d;
+}
+
+.login-prompt a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .tool-details-content {
+    grid-template-columns: 1fr;
+  }
+
+  .rental-form-actions {
+    flex-direction: column;
+  }
+}
+

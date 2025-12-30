@@ -28,6 +28,12 @@
   border-color: #3498db;
 }
 
+.input-textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
 .input-error {
   border-color: #e74c3c;
 }

@@ -1,0 +1,119 @@
+.my-rentals-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.my-rentals-header {
+  margin-bottom: 2rem;
+}
+
+.my-rentals-header h1 {
+  color: #2c3e50;
+}
+
+.rentals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rental-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.rental-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.rental-card-header h2 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.rental-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.rental-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #7f8c8d;
+}
+
+.rental-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.rental-status {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.rental-status-pending {
+  background-color: #fef5e7;
+  color: #f39c12;
+}
+
+.rental-status-active {
+  background-color: #d5f4e6;
+  color: #27ae60;
+}
+
+.rental-status-completed {
+  background-color: #ebedef;
+  color: #7f8c8d;
+}
+
+.rental-status-cancelled {
+  background-color: #fadbd8;
+  color: #e74c3c;
+}
+
+.rental-status-overdue {
+  background-color: #fadbd8;
+  color: #c0392b;
+}
+
+.rental-card-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ecf0f1;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+  .my-rentals-container {
+    padding: 1rem;
+  }
+
+  .rental-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
