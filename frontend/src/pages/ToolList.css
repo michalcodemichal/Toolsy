@@ -24,12 +24,14 @@
   min-width: 200px;
 }
 
-.category-select {
+.category-select,
+.sort-select,
+.sort-order-select {
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  min-width: 200px;
+  min-width: 150px;
 }
 
 .tool-list-grid {

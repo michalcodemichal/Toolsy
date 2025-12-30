@@ -39,3 +39,8 @@ export const deleteTool = async (id) => {
   await api.delete(`/tools/${id}`)
 }
 
+export const getToolsSorted = async (sortBy, sortOrder = 'asc') => {
+  const response = await api.get(`/tools/sorted?sortBy=${sortBy}&sortOrder=${sortOrder}`)
+  return response.data
+}
+

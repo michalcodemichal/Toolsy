@@ -53,6 +53,14 @@ public class ToolController {
         return ResponseEntity.ok(tools);
     }
 
+    @GetMapping("/sorted")
+    public ResponseEntity<List<ToolResponse>> getToolsSorted(
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        List<ToolResponse> tools = toolService.getToolsSorted(sortBy, sortOrder);
+        return ResponseEntity.ok(tools);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ToolResponse> createTool(@Valid @RequestBody CreateToolRequest request) {

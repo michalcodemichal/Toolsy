@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getTools, searchTools, getToolsByCategory } from '../services/toolService'
+import { getTools, searchTools, getToolsByCategory, getToolsSorted } from '../services/toolService'
 import ToolCard from '../components/ToolCard'
 import Input from '../components/Input'
 import Loading from '../components/Loading'
@@ -11,6 +11,8 @@ const ToolList = () => {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
+  const [sortBy, setSortBy] = useState('')
+  const [sortOrder, setSortOrder] = useState('asc')
 
   useEffect(() => {
     const fetchTools = async () => {
@@ -44,13 +46,20 @@ const ToolList = () => {
         } catch (error) {
           console.error('Błąd filtrowania:', error)
         }
+      } else if (sortBy) {
+        try {
+          const data = await getToolsSorted(sortBy, sortOrder)
+          setFilteredTools(data)
+        } catch (error) {
+          console.error('Błąd sortowania:', error)
+        }
       } else {
         setFilteredTools(tools)
       }
     }
 
     filterTools()
-  }, [searchTerm, selectedCategory, tools])
+  }, [searchTerm, selectedCategory, sortBy, sortOrder, tools])
 
   const categories = [...new Set(tools.map(tool => tool.category))]
 
@@ -71,6 +80,7 @@ const ToolList = () => {
           onChange={(e) => {
             setSearchTerm(e.target.value)
             setSelectedCategory('')
+            setSortBy('')
           }}
           className="search-input"
         />
@@ -79,6 +89,7 @@ const ToolList = () => {
           onChange={(e) => {
             setSelectedCategory(e.target.value)
             setSearchTerm('')
+            setSortBy('')
           }}
           className="category-select"
         >
@@ -89,6 +100,30 @@ const ToolList = () => {
             </option>
           ))}
         </select>
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value)
+            setSearchTerm('')
+            setSelectedCategory('')
+          }}
+          className="sort-select"
+        >
+          <option value="">Sortuj</option>
+          <option value="name">Nazwa</option>
+          <option value="price">Cena</option>
+          <option value="category">Kategoria</option>
+        </select>
+        {sortBy && (
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="sort-order-select"
+          >
+            <option value="asc">Rosnąco</option>
+            <option value="desc">Malejąco</option>
+          </select>
+        )}
       </div>
 
       <div className="tool-list-grid">

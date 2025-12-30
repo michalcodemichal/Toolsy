@@ -66,6 +66,34 @@ public class ToolService {
                 .collect(Collectors.toList());
     }
 
+    public List<ToolResponse> getToolsSorted(String sortBy, String sortOrder) {
+        List<Tool> tools = toolRepository.findAll();
+        
+        if (sortBy != null && !sortBy.isEmpty()) {
+            tools.sort((a, b) -> {
+                int result = 0;
+                switch (sortBy.toLowerCase()) {
+                    case "name":
+                        result = a.getName().compareToIgnoreCase(b.getName());
+                        break;
+                    case "price":
+                        result = a.getDailyPrice().compareTo(b.getDailyPrice());
+                        break;
+                    case "category":
+                        result = a.getCategory().compareToIgnoreCase(b.getCategory());
+                        break;
+                    default:
+                        return 0;
+                }
+                return "desc".equalsIgnoreCase(sortOrder) ? -result : result;
+            });
+        }
+        
+        return tools.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public ToolResponse updateTool(Long id, CreateToolRequest request) {
         Tool tool = toolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Narzędzie nie znalezione"));

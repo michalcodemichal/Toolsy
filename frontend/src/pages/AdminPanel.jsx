@@ -3,6 +3,8 @@ import { toast } from 'react-toastify'
 import { getAllRentals, approveRental, completeRental } from '../services/rentalService'
 import { getAllUsers, deactivateUser, activateUser } from '../services/userService'
 import { getTools, createTool, updateTool, deleteTool } from '../services/toolService'
+import { uploadFile } from '../services/fileService'
+import { getStatistics } from '../services/statisticsService'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Input from '../components/Input'
@@ -14,6 +16,7 @@ const AdminPanel = () => {
   const [rentals, setRentals] = useState([])
   const [users, setUsers] = useState([])
   const [tools, setTools] = useState([])
+  const [statistics, setStatistics] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showToolForm, setShowToolForm] = useState(false)
   const [editingTool, setEditingTool] = useState(null)
@@ -25,6 +28,7 @@ const AdminPanel = () => {
     quantity: '',
     imageUrl: ''
   })
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -33,7 +37,10 @@ const AdminPanel = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      if (activeTab === 'rentals') {
+      if (activeTab === 'statistics') {
+        const data = await getStatistics()
+        setStatistics(data)
+      } else if (activeTab === 'rentals') {
         const data = await getAllRentals()
         setRentals(data)
       } else if (activeTab === 'users') {
@@ -154,6 +161,12 @@ const AdminPanel = () => {
 
       <div className="admin-tabs">
         <button
+          className={`admin-tab ${activeTab === 'statistics' ? 'active' : ''}`}
+          onClick={() => setActiveTab('statistics')}
+        >
+          Statystyki
+        </button>
+        <button
           className={`admin-tab ${activeTab === 'rentals' ? 'active' : ''}`}
           onClick={() => setActiveTab('rentals')}
         >
@@ -172,6 +185,41 @@ const AdminPanel = () => {
           Narzędzia
         </button>
       </div>
+
+      {activeTab === 'statistics' && (
+        <div className="admin-content">
+          {statistics ? (
+            <div className="statistics-grid">
+              <Card className="stat-card">
+                <h3>Wszystkie narzędzia</h3>
+                <p className="stat-value">{statistics.totalTools}</p>
+              </Card>
+              <Card className="stat-card">
+                <h3>Dostępne narzędzia</h3>
+                <p className="stat-value">{statistics.availableTools}</p>
+              </Card>
+              <Card className="stat-card">
+                <h3>Wszyscy użytkownicy</h3>
+                <p className="stat-value">{statistics.totalUsers}</p>
+              </Card>
+              <Card className="stat-card">
+                <h3>Wszystkie wypożyczenia</h3>
+                <p className="stat-value">{statistics.totalRentals}</p>
+              </Card>
+              <Card className="stat-card">
+                <h3>Aktywne wypożyczenia</h3>
+                <p className="stat-value">{statistics.activeRentals}</p>
+              </Card>
+              <Card className="stat-card">
+                <h3>Całkowity przychód</h3>
+                <p className="stat-value">{statistics.totalRevenue} zł</p>
+              </Card>
+            </div>
+          ) : (
+            <Loading />
+          )}
+        </div>
+      )}
 
       {activeTab === 'rentals' && (
         <div className="admin-content">
@@ -293,11 +341,40 @@ const AdminPanel = () => {
                   onChange={(e) => setToolForm({ ...toolForm, quantity: e.target.value })}
                   required
                 />
-                <Input
-                  label="URL zdjęcia"
-                  value={toolForm.imageUrl}
-                  onChange={(e) => setToolForm({ ...toolForm, imageUrl: e.target.value })}
-                />
+                <div className="image-upload-section">
+                  <Input
+                    label="URL zdjęcia"
+                    value={toolForm.imageUrl}
+                    onChange={(e) => setToolForm({ ...toolForm, imageUrl: e.target.value })}
+                    placeholder="Lub prześlij plik poniżej"
+                  />
+                  <div className="file-upload-wrapper">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files[0]
+                        if (file) {
+                          setUploadingImage(true)
+                          try {
+                            const result = await uploadFile(file)
+                            setToolForm({ ...toolForm, imageUrl: result.url })
+                            toast.success('Zdjęcie przesłane pomyślnie')
+                          } catch (error) {
+                            toast.error('Błąd przesyłania zdjęcia')
+                          } finally {
+                            setUploadingImage(false)
+                          }
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload" className="file-upload-button">
+                      {uploadingImage ? 'Przesyłanie...' : 'Wybierz zdjęcie'}
+                    </label>
+                  </div>
+                </div>
                 <div className="tool-form-actions">
                   <Button type="submit">
                     {editingTool ? 'Zapisz zmiany' : 'Utwórz'}

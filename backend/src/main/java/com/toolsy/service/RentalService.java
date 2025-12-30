@@ -23,12 +23,15 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final ToolService toolService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public RentalService(RentalRepository rentalRepository, ToolService toolService, UserService userService) {
+    public RentalService(RentalRepository rentalRepository, ToolService toolService, 
+                        UserService userService, NotificationService notificationService) {
         this.rentalRepository = rentalRepository;
         this.toolService = toolService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     public RentalResponse createRental(Long userId, CreateRentalRequest request) {
@@ -72,6 +75,17 @@ public class RentalService {
         rental.setNotes(request.getNotes());
 
         Rental savedRental = rentalRepository.save(rental);
+        
+        notificationService.sendRentalCreatedNotification(
+                savedRental.getId(),
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName() + " " + user.getLastName(),
+                tool.getName(),
+                savedRental.getStartDate(),
+                savedRental.getEndDate()
+        );
+        
         return mapToResponse(savedRental);
     }
 
@@ -85,6 +99,17 @@ public class RentalService {
 
         rental.setStatus(RentalStatus.ACTIVE);
         Rental updatedRental = rentalRepository.save(rental);
+        
+        notificationService.sendRentalApprovedNotification(
+                updatedRental.getId(),
+                updatedRental.getUser().getId(),
+                updatedRental.getUser().getEmail(),
+                updatedRental.getUser().getFirstName() + " " + updatedRental.getUser().getLastName(),
+                updatedRental.getTool().getName(),
+                updatedRental.getStartDate(),
+                updatedRental.getEndDate()
+        );
+        
         return mapToResponse(updatedRental);
     }
 
@@ -99,6 +124,17 @@ public class RentalService {
         rental.setStatus(RentalStatus.COMPLETED);
         rental.setReturnedAt(java.time.LocalDateTime.now());
         Rental updatedRental = rentalRepository.save(rental);
+        
+        notificationService.sendRentalCompletedNotification(
+                updatedRental.getId(),
+                updatedRental.getUser().getId(),
+                updatedRental.getUser().getEmail(),
+                updatedRental.getUser().getFirstName() + " " + updatedRental.getUser().getLastName(),
+                updatedRental.getTool().getName(),
+                updatedRental.getStartDate(),
+                updatedRental.getEndDate()
+        );
+        
         return mapToResponse(updatedRental);
     }
 

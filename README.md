@@ -25,12 +25,14 @@ Aplikacja webowa do zarządzania wypożyczalnią narzędzi z pełnym systemem au
 - ✅ Rejestracja i logowanie użytkowników
 - ✅ System ról (USER, ADMIN)
 - ✅ Przeglądanie katalogu narzędzi
-- ✅ Wyszukiwanie i filtrowanie narzędzi
+- ✅ Wyszukiwanie, filtrowanie i sortowanie narzędzi
 - ✅ Wypożyczanie narzędzi
 - ✅ Zarządzanie wypożyczeniami
-- ✅ Panel administracyjny
+- ✅ Panel administracyjny ze statystykami
 - ✅ Zarządzanie użytkownikami
 - ✅ Zarządzanie narzędziami (CRUD)
+- ✅ Upload zdjęć narzędzi
+- ✅ System powiadomień asynchronicznych (RabbitMQ)
 - ✅ Responsywny design
 
 ## Wymagania
@@ -38,6 +40,26 @@ Aplikacja webowa do zarządzania wypożyczalnią narzędzi z pełnym systemem au
 - Java 17 lub nowsza
 - Node.js 18 lub nowsza
 - Maven 3.6+
+- RabbitMQ (opcjonalnie, dla powiadomień asynchronicznych)
+
+### Instalacja RabbitMQ
+
+**macOS:**
+```bash
+brew install rabbitmq
+brew services start rabbitmq
+```
+
+**Linux:**
+```bash
+sudo apt-get install rabbitmq-server
+sudo systemctl start rabbitmq-server
+```
+
+**Windows:**
+Pobierz i zainstaluj z: https://www.rabbitmq.com/download.html
+
+Aplikacja będzie działać bez RabbitMQ, ale powiadomienia asynchroniczne nie będą funkcjonować.
 
 ## Instalacja i uruchomienie
 
@@ -124,6 +146,12 @@ Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 - `PUT /api/users/{id}/activate` - Aktywacja użytkownika (ADMIN)
 - `PUT /api/users/{id}/deactivate` - Dezaktywacja użytkownika (ADMIN)
 
+### Pliki
+- `POST /api/files/upload` - Upload zdjęcia (ADMIN)
+
+### Statystyki
+- `GET /api/statistics` - Statystyki systemu (ADMIN)
+
 ## Struktura projektu
 
 ```
@@ -175,6 +203,15 @@ Aplikacja wykorzystuje architekturę warstwową:
 ## Baza danych
 
 Aplikacja używa H2 Database (in-memory) z automatyczną inicjalizacją danych. W pliku `application.properties` można zmienić konfigurację na PostgreSQL dla produkcji.
+
+## Asynchroniczność / Kolejki
+
+Aplikacja wykorzystuje RabbitMQ do asynchronicznego przetwarzania powiadomień o wypożyczeniach. System wysyła wiadomości do kolejki przy:
+- Utworzeniu wypożyczenia
+- Zatwierdzeniu wypożyczenia
+- Zakończeniu wypożyczenia
+
+Konsument (`NotificationConsumer`) przetwarza wiadomości z kolejki i loguje informacje o powiadomieniach (w produkcji można rozszerzyć o wysyłanie emaili).
 
 ### Diagram ERD
 
