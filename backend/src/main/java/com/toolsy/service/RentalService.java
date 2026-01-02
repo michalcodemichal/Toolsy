@@ -76,15 +76,20 @@ public class RentalService {
 
         Rental savedRental = rentalRepository.save(rental);
         
-        notificationService.sendRentalCreatedNotification(
-                savedRental.getId(),
-                user.getId(),
-                user.getEmail(),
-                user.getFirstName() + " " + user.getLastName(),
-                tool.getName(),
-                savedRental.getStartDate(),
-                savedRental.getEndDate()
-        );
+        try {
+            notificationService.sendRentalCreatedNotification(
+                    savedRental.getId(),
+                    user.getId(),
+                    user.getEmail(),
+                    user.getFirstName() + " " + user.getLastName(),
+                    tool.getName(),
+                    savedRental.getStartDate(),
+                    savedRental.getEndDate()
+            );
+        } catch (Exception e) {
+            System.err.println("Błąd wysyłania powiadomienia (nie blokuje wypożyczenia): " + e.getMessage());
+            e.printStackTrace();
+        }
         
         return mapToResponse(savedRental);
     }

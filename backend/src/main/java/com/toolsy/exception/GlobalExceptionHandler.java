@@ -40,7 +40,21 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        errors.put("message", "Błąd walidacji danych");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        Map<String, String> error = new HashMap<>();
+        String message = ex.getMessage();
+        if (message != null && message.contains("LocalDate")) {
+            error.put("message", "Nieprawidłowy format daty. Użyj formatu YYYY-MM-DD");
+        } else {
+            error.put("message", "Nieprawidłowy format danych");
+        }
+        error.put("details", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(Exception.class)

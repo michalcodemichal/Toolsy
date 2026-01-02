@@ -29,6 +29,11 @@ public class RentalController {
     public ResponseEntity<RentalResponse> createRental(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @Valid @RequestBody CreateRentalRequest request) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        System.out.println("Tworzenie wypożyczenia dla użytkownika: " + userPrincipal.getId());
+        System.out.println("Request: " + request.getToolId() + ", " + request.getStartDate() + " - " + request.getEndDate());
         RentalResponse rental = rentalService.createRental(userPrincipal.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(rental);
     }

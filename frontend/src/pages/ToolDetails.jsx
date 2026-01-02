@@ -48,19 +48,36 @@ const ToolDetails = () => {
       return
     }
 
+    if (!rentalData.startDate || !rentalData.endDate) {
+      toast.error('Proszę wybrać datę rozpoczęcia i zakończenia')
+      return
+    }
+
     setRenting(true)
     try {
-      await createRental({
+      console.log('Tworzenie wypożyczenia:', {
         toolId: parseInt(id),
         startDate: rentalData.startDate,
         endDate: rentalData.endDate,
         notes: rentalData.notes
       })
+      await createRental({
+        toolId: parseInt(id),
+        startDate: rentalData.startDate,
+        endDate: rentalData.endDate,
+        notes: rentalData.notes || ''
+      })
       toast.success('Wypożyczenie utworzone pomyślnie')
       setShowRentalForm(false)
       setRentalData({ startDate: '', endDate: '', notes: '' })
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Błąd tworzenia wypożyczenia')
+      console.error('Błąd tworzenia wypożyczenia:', error)
+      console.error('Szczegóły błędu:', error.response?.data || error.message)
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          'Błąd tworzenia wypożyczenia'
+      toast.error(errorMessage)
     } finally {
       setRenting(false)
     }
