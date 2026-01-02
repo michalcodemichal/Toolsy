@@ -196,12 +196,22 @@ public class DataInitializer implements CommandLineRunner {
             for (int i = 0; i < toolNames.length; i++) {
                 if (toolNames[i].equals(toolName)) {
                     String newDescription = descriptions[i];
-                    if (!newDescription.equals(tool.getDescription()) || tool.getDescription().contains("model")) {
+                    String currentDescription = tool.getDescription();
+                    boolean needsUpdate = false;
+                    
+                    if (currentDescription == null || currentDescription.contains("model") || !newDescription.equals(currentDescription)) {
+                        String oldImageUrl = tool.getImageUrl();
                         tool.setDescription(newDescription);
+                        if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+                            tool.setImageUrl(oldImageUrl);
+                        }
                         toolRepository.save(tool);
-                        System.out.println("Zaktualizowano: " + toolName);
+                        System.out.println("Zaktualizowano: " + toolName + (oldImageUrl != null ? " (zachowano zdjęcie)" : ""));
+                        needsUpdate = true;
                     }
-                    break;
+                    if (!needsUpdate) {
+                        break;
+                    }
                 }
             }
         }

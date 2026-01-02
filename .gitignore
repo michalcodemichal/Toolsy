@@ -14,5 +14,11 @@ build/
 *.swp
 *.swo
 
+# H2 Database files
+*.mv.db
+*.trace.db
+backend/data/
+uploads/
+
 
 
