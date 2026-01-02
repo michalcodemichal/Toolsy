@@ -32,8 +32,16 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (userRepository.count() == 0) {
+        long userCount = userRepository.count();
+        long toolCount = toolRepository.count();
+        System.out.println("Liczba użytkowników w bazie: " + userCount);
+        System.out.println("Liczba narzędzi w bazie: " + toolCount);
+        
+        if (userCount == 0) {
+            System.out.println("Inicjalizacja danych testowych...");
             initializeData();
+            System.out.println("Dane testowe zainicjalizowane pomyślnie");
+            System.out.println("Liczba narzędzi po inicjalizacji: " + toolRepository.count());
         }
     }
 
@@ -110,4 +118,6 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 }
+
+
 

@@ -23,3 +23,5 @@ export const activateUser = async (id) => {
   await api.put(`/users/${id}/activate`)
 }
 
+
+

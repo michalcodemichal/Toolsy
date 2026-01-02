@@ -17,11 +17,23 @@ const ToolList = () => {
   useEffect(() => {
     const fetchTools = async () => {
       try {
+        console.log('Pobieranie narzędzi...')
         const data = await getTools()
-        setTools(data)
-        setFilteredTools(data)
+        console.log('Otrzymane dane:', data)
+        if (data && Array.isArray(data)) {
+          console.log('Liczba narzędzi:', data.length)
+          setTools(data)
+          setFilteredTools(data)
+        } else {
+          console.warn('Dane nie są tablicą:', data)
+          setTools([])
+          setFilteredTools([])
+        }
       } catch (error) {
         console.error('Błąd ładowania narzędzi:', error)
+        console.error('Szczegóły błędu:', error.response?.data || error.message)
+        setTools([])
+        setFilteredTools([])
       } finally {
         setLoading(false)
       }
@@ -32,34 +44,55 @@ const ToolList = () => {
 
   useEffect(() => {
     const filterTools = async () => {
+      let filtered = []
+      
       if (searchTerm) {
         try {
-          const data = await searchTools(searchTerm)
-          setFilteredTools(data)
+          filtered = await searchTools(searchTerm)
         } catch (error) {
           console.error('Błąd wyszukiwania:', error)
+          filtered = []
         }
       } else if (selectedCategory) {
         try {
-          const data = await getToolsByCategory(selectedCategory)
-          setFilteredTools(data)
+          filtered = await getToolsByCategory(selectedCategory)
         } catch (error) {
           console.error('Błąd filtrowania:', error)
-        }
-      } else if (sortBy) {
-        try {
-          const data = await getToolsSorted(sortBy, sortOrder)
-          setFilteredTools(data)
-        } catch (error) {
-          console.error('Błąd sortowania:', error)
+          filtered = []
         }
       } else {
-        setFilteredTools(tools)
+        filtered = [...tools]
       }
+      
+      if (sortBy && filtered.length > 0) {
+        filtered.sort((a, b) => {
+          let result = 0
+          switch (sortBy.toLowerCase()) {
+            case 'name':
+              result = a.name.localeCompare(b.name)
+              break
+            case 'price':
+              result = parseFloat(a.dailyPrice) - parseFloat(b.dailyPrice)
+              break
+            case 'category':
+              result = a.category.localeCompare(b.category)
+              break
+            default:
+              return 0
+          }
+          return sortOrder === 'desc' ? -result : result
+        })
+      }
+      
+      setFilteredTools(filtered)
     }
 
-    filterTools()
-  }, [searchTerm, selectedCategory, sortBy, sortOrder, tools])
+    if (tools.length > 0 || searchTerm || selectedCategory) {
+      filterTools()
+    } else if (tools.length === 0 && !loading) {
+      setFilteredTools([])
+    }
+  }, [searchTerm, selectedCategory, sortBy, sortOrder, tools, loading])
 
   const categories = [...new Set(tools.map(tool => tool.category))]
 
@@ -80,7 +113,6 @@ const ToolList = () => {
           onChange={(e) => {
             setSearchTerm(e.target.value)
             setSelectedCategory('')
-            setSortBy('')
           }}
           className="search-input"
         />
@@ -89,7 +121,6 @@ const ToolList = () => {
           onChange={(e) => {
             setSelectedCategory(e.target.value)
             setSearchTerm('')
-            setSortBy('')
           }}
           className="category-select"
         >
@@ -104,8 +135,6 @@ const ToolList = () => {
           value={sortBy}
           onChange={(e) => {
             setSortBy(e.target.value)
-            setSearchTerm('')
-            setSelectedCategory('')
           }}
           className="sort-select"
         >

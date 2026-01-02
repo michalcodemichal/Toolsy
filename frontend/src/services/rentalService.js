@@ -35,3 +35,5 @@ export const cancelRental = async (id) => {
   return response.data
 }
 
+
+

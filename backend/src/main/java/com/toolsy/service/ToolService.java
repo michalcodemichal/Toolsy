@@ -37,7 +37,9 @@ public class ToolService {
     }
 
     public List<ToolResponse> getAllTools() {
-        return toolRepository.findAll().stream()
+        List<Tool> allTools = toolRepository.findAll();
+        System.out.println("Pobrano " + allTools.size() + " narzędzi z bazy");
+        return allTools.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
