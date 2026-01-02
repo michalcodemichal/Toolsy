@@ -100,7 +100,16 @@ public class DataInitializer implements CommandLineRunner {
             tool.setCategory(categories[i % categories.length]);
             tool.setDailyPrice(new BigDecimal(20 + (i % 5) * 10));
             tool.setQuantity(3 + (i % 3));
-            tool.setImageUrl("https://via.placeholder.com/300?text=" + (i + 1));
+            
+            String[] imageUrls = {
+                "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",
+                "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400",
+                "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400",
+                "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=400",
+                "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",
+                "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400"
+            };
+            tool.setImageUrl(imageUrls[i % imageUrls.length]);
             tool.setStatus(ToolStatus.AVAILABLE);
             tools.add(toolRepository.save(tool));
         }

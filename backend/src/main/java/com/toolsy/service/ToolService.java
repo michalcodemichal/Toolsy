@@ -29,7 +29,11 @@ public class ToolService {
         tool.setCategory(request.getCategory());
         tool.setDailyPrice(request.getDailyPrice());
         tool.setQuantity(request.getQuantity());
-        tool.setImageUrl(request.getImageUrl());
+        if (request.getImageUrl() != null && !request.getImageUrl().trim().isEmpty()) {
+            tool.setImageUrl(request.getImageUrl().trim());
+        } else {
+            tool.setImageUrl(null);
+        }
         tool.setStatus(ToolStatus.AVAILABLE);
 
         Tool savedTool = toolRepository.save(tool);
@@ -105,8 +109,10 @@ public class ToolService {
         tool.setCategory(request.getCategory());
         tool.setDailyPrice(request.getDailyPrice());
         tool.setQuantity(request.getQuantity());
-        if (request.getImageUrl() != null) {
-            tool.setImageUrl(request.getImageUrl());
+        if (request.getImageUrl() != null && !request.getImageUrl().trim().isEmpty()) {
+            tool.setImageUrl(request.getImageUrl().trim());
+        } else {
+            tool.setImageUrl(null);
         }
 
         Tool updatedTool = toolRepository.save(tool);

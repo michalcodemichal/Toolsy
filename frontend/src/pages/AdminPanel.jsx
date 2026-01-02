@@ -98,8 +98,10 @@ const AdminPanel = () => {
       const toolData = {
         ...toolForm,
         dailyPrice: parseFloat(toolForm.dailyPrice),
-        quantity: parseInt(toolForm.quantity)
+        quantity: parseInt(toolForm.quantity),
+        imageUrl: toolForm.imageUrl || null
       }
+      console.log('Zapisywanie narzędzia:', toolData)
       if (editingTool) {
         await updateTool(editingTool.id, toolData)
         toast.success('Narzędzie zaktualizowane')
@@ -119,7 +121,9 @@ const AdminPanel = () => {
       })
       fetchData()
     } catch (error) {
-      toast.error('Błąd zapisywania narzędzia')
+      console.error('Błąd zapisywania narzędzia:', error)
+      console.error('Szczegóły błędu:', error.response?.data || error.message)
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Błąd zapisywania narzędzia')
     }
   }
 
@@ -358,10 +362,17 @@ const AdminPanel = () => {
                           setUploadingImage(true)
                           try {
                             const result = await uploadFile(file)
-                            setToolForm({ ...toolForm, imageUrl: result.url })
-                            toast.success('Zdjęcie przesłane pomyślnie')
+                            console.log('Upload result:', result)
+                            if (result && result.url) {
+                              setToolForm({ ...toolForm, imageUrl: result.url })
+                              toast.success('Zdjęcie przesłane pomyślnie')
+                            } else {
+                              toast.error('Nieprawidłowa odpowiedź z serwera')
+                            }
                           } catch (error) {
-                            toast.error('Błąd przesyłania zdjęcia')
+                            console.error('Błąd uploadu:', error)
+                            console.error('Szczegóły:', error.response?.data || error.message)
+                            toast.error(error.response?.data?.error || 'Błąd przesyłania zdjęcia')
                           } finally {
                             setUploadingImage(false)
                           }
