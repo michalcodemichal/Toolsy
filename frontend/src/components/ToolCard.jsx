@@ -9,7 +9,14 @@ const ToolCard = ({ tool }) => {
       <Card className="tool-card">
         <div className="tool-card-image">
           {tool.imageUrl ? (
-            <img src={tool.imageUrl} alt={tool.name} />
+            <img 
+              src={tool.imageUrl.startsWith('http') ? tool.imageUrl : `http://localhost:8080${tool.imageUrl}`} 
+              alt={tool.name}
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.parentElement.innerHTML = '<div class="tool-card-placeholder">Brak zdjęcia</div>'
+              }}
+            />
           ) : (
             <div className="tool-card-placeholder">Brak zdjęcia</div>
           )}
