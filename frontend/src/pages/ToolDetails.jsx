@@ -21,13 +21,16 @@ const ToolDetails = () => {
   const [rentalData, setRentalData] = useState({
     startDate: '',
     endDate: '',
+    quantity: 1,
     notes: ''
   })
 
   useEffect(() => {
     const fetchTool = async () => {
       try {
-        const data = await getToolById(id)
+        const startDate = rentalData.startDate || null
+        const endDate = rentalData.endDate || null
+        const data = await getToolById(id, startDate, endDate)
         setTool(data)
       } catch (error) {
         toast.error('Błąd ładowania narzędzia')
@@ -38,7 +41,7 @@ const ToolDetails = () => {
     }
 
     fetchTool()
-  }, [id, navigate])
+  }, [id, navigate, rentalData.startDate, rentalData.endDate])
 
   const handleRentalSubmit = async (e) => {
     e.preventDefault()
@@ -65,11 +68,14 @@ const ToolDetails = () => {
         toolId: parseInt(id),
         startDate: rentalData.startDate,
         endDate: rentalData.endDate,
+        quantity: parseInt(rentalData.quantity) || 1,
         notes: rentalData.notes || ''
       })
       toast.success('Wypożyczenie utworzone pomyślnie')
       setShowRentalForm(false)
-      setRentalData({ startDate: '', endDate: '', notes: '' })
+      setRentalData({ startDate: '', endDate: '', quantity: 1, notes: '' })
+      const updatedTool = await getToolById(id)
+      setTool(updatedTool)
     } catch (error) {
       console.error('Błąd tworzenia wypożyczenia:', error)
       console.error('Szczegóły błędu:', error.response?.data || error.message)
@@ -158,6 +164,18 @@ const ToolDetails = () => {
                       min={rentalData.startDate || new Date().toISOString().split('T')[0]}
                     />
                     <Input
+                      label="Ilość"
+                      type="number"
+                      value={rentalData.quantity}
+                      onChange={(e) => {
+                        const qty = Math.max(1, Math.min(parseInt(e.target.value) || 1, tool.quantity))
+                        setRentalData({ ...rentalData, quantity: qty })
+                      }}
+                      required
+                      min={1}
+                      max={tool.quantity}
+                    />
+                    <Input
                       label="Uwagi (opcjonalnie)"
                       type="textarea"
                       value={rentalData.notes}
@@ -174,7 +192,7 @@ const ToolDetails = () => {
                         variant="secondary"
                         onClick={() => {
                           setShowRentalForm(false)
-                          setRentalData({ startDate: '', endDate: '', notes: '' })
+                          setRentalData({ startDate: '', endDate: '', quantity: 1, notes: '' })
                         }}
                       >
                         Anuluj

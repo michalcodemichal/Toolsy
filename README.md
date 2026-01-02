@@ -215,32 +215,57 @@ Konsument (`NotificationConsumer`) przetwarza wiadomości z kolejki i loguje inf
 
 ### Diagram ERD
 
-```
-┌─────────────┐         ┌─────────────┐         ┌─────────────┐
-│    User     │         │    Tool     │         │   Rental    │
-├─────────────┤         ├─────────────┤         ├─────────────┤
-│ id (PK)     │         │ id (PK)     │         │ id (PK)     │
-│ username    │         │ name        │         │ user_id(FK) │
-│ email       │         │ description │         │ tool_id(FK) │
-│ password    │         │ category    │         │ startDate   │
-│ firstName   │         │ dailyPrice  │         │ endDate     │
-│ lastName    │         │ quantity    │         │ totalPrice  │
-│ phoneNumber │         │ imageUrl    │         │ status      │
-│ role        │         │ status      │         │ notes       │
-│ active      │         │ createdAt   │         │ createdAt   │
-│ createdAt   │         │ updatedAt   │         │ updatedAt   │
-│ updatedAt   │         │             │         │ returnedAt  │
-└─────────────┘         └─────────────┘         └─────────────┘
-      │                        │                        │
-      │                        │                        │
-      └────────────────────────┼────────────────────────┘
-                               │
-                        (One-to-Many)
+```mermaid
+erDiagram
+    USERS {
+        bigint id PK
+        varchar username UK "unique, not null"
+        varchar email UK "unique, not null"
+        varchar password "not null"
+        varchar first_name "not null"
+        varchar last_name "not null"
+        varchar phone_number
+        varchar role "not null, default: USER"
+        boolean active "not null, default: true"
+        timestamp created_at "not null"
+        timestamp updated_at "not null"
+    }
+    
+    TOOLS {
+        bigint id PK
+        varchar name "not null"
+        varchar description "not null"
+        varchar category "not null"
+        decimal daily_price "not null"
+        integer quantity "not null"
+        varchar image_url
+        varchar status "not null, default: AVAILABLE"
+        timestamp created_at "not null"
+        timestamp updated_at "not null"
+    }
+    
+    RENTALS {
+        bigint id PK
+        bigint user_id FK "not null"
+        bigint tool_id FK "not null"
+        date start_date "not null"
+        date end_date "not null"
+        integer quantity "not null, default: 1"
+        decimal total_price
+        varchar status "not null, default: PENDING"
+        varchar notes
+        timestamp created_at "not null"
+        timestamp updated_at "not null"
+        timestamp returned_at
+    }
+    
+    USERS ||--o{ RENTALS : "ma"
+    TOOLS ||--o{ RENTALS : "jest wypożyczane"
 ```
 
-Relacje:
-- User (1) ──< Rental (Many)
-- Tool (1) ──< Rental (Many)
+**Relacje:**
+- User (1) ──< Rental (Many) - Jeden użytkownik może mieć wiele wypożyczeń
+- Tool (1) ──< Rental (Many) - Jedno narzędzie może być wypożyczone wiele razy
 
 ## Licencja
 

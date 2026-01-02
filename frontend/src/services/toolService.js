@@ -10,8 +10,12 @@ export const getAvailableTools = async () => {
   return response.data
 }
 
-export const getToolById = async (id) => {
-  const response = await api.get(`/tools/${id}`)
+export const getToolById = async (id, startDate = null, endDate = null) => {
+  let url = `/tools/${id}`
+  if (startDate && endDate) {
+    url += `?startDate=${startDate}&endDate=${endDate}`
+  }
+  const response = await api.get(url)
   return response.data
 }
 

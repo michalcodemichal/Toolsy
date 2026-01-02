@@ -4,11 +4,15 @@ import com.toolsy.dto.request.CreateToolRequest;
 import com.toolsy.dto.response.ToolResponse;
 import com.toolsy.model.Tool;
 import com.toolsy.model.ToolStatus;
+import com.toolsy.model.Rental;
+import com.toolsy.model.RentalStatus;
 import com.toolsy.repository.ToolRepository;
+import com.toolsy.repository.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,10 +20,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class ToolService {
     private final ToolRepository toolRepository;
+    private final RentalRepository rentalRepository;
 
     @Autowired
-    public ToolService(ToolRepository toolRepository) {
+    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository) {
         this.toolRepository = toolRepository;
+        this.rentalRepository = rentalRepository;
     }
 
     public ToolResponse createTool(CreateToolRequest request) {
@@ -58,6 +64,34 @@ public class ToolService {
         Tool tool = toolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Narzędzie nie znalezione"));
         return mapToResponse(tool);
+    }
+
+    public ToolResponse getToolByIdWithAvailability(Long id, java.time.LocalDate startDate, java.time.LocalDate endDate) {
+        Tool tool = toolRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Narzędzie nie znalezione"));
+        ToolResponse response = mapToResponse(tool);
+        
+        if (startDate != null && endDate != null) {
+            int availableQuantity = calculateAvailableQuantity(tool, startDate, endDate);
+            response.setQuantity(availableQuantity);
+        }
+        
+        return response;
+    }
+
+    private int calculateAvailableQuantity(Tool tool, LocalDate startDate, LocalDate endDate) {
+        List<Rental> overlappingRentals = rentalRepository.findOverlappingRentals(
+                tool,
+                startDate,
+                endDate,
+                List.of(RentalStatus.PENDING, RentalStatus.ACTIVE)
+        );
+        
+        int rentedQuantity = overlappingRentals.stream()
+                .mapToInt(r -> r.getQuantity() != null ? r.getQuantity() : 1)
+                .sum();
+        
+        return Math.max(0, tool.getQuantity() - rentedQuantity);
     }
 
     public List<ToolResponse> getToolsByCategory(String category) {
@@ -128,6 +162,10 @@ public class ToolService {
     public Tool getToolEntity(Long id) {
         return toolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Narzędzie nie znalezione"));
+    }
+
+    public Tool saveTool(Tool tool) {
+        return toolRepository.save(tool);
     }
 
     private ToolResponse mapToResponse(Tool tool) {

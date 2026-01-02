@@ -36,7 +36,21 @@ public class ToolController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToolResponse> getToolById(@PathVariable Long id) {
+    public ResponseEntity<ToolResponse> getToolById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        if (startDate != null && endDate != null) {
+            try {
+                java.time.LocalDate start = java.time.LocalDate.parse(startDate);
+                java.time.LocalDate end = java.time.LocalDate.parse(endDate);
+                ToolResponse tool = toolService.getToolByIdWithAvailability(id, start, end);
+                return ResponseEntity.ok(tool);
+            } catch (Exception e) {
+                ToolResponse tool = toolService.getToolById(id);
+                return ResponseEntity.ok(tool);
+            }
+        }
         ToolResponse tool = toolService.getToolById(id);
         return ResponseEntity.ok(tool);
     }

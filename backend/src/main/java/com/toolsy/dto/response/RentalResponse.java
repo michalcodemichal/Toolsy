@@ -14,6 +14,7 @@ public class RentalResponse {
     private String toolName;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer quantity;
     private BigDecimal totalPrice;
     private RentalStatus status;
     private String notes;
@@ -86,6 +87,14 @@ public class RentalResponse {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public BigDecimal getTotalPrice() {

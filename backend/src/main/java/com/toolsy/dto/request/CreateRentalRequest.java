@@ -13,6 +13,9 @@ public class CreateRentalRequest {
     @NotNull
     private LocalDate endDate;
 
+    @NotNull
+    private Integer quantity = 1;
+
     private String notes;
 
     public CreateRentalRequest() {
@@ -48,6 +51,14 @@ public class CreateRentalRequest {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }
 

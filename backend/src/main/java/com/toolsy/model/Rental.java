@@ -31,6 +31,10 @@ public class Rental {
     @Column(nullable = false)
     private LocalDate endDate;
 
+    @NotNull
+    @Column(nullable = false)
+    private Integer quantity = 1;
+
     @Column(precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
@@ -146,6 +150,14 @@ public class Rental {
 
     public void setReturnedAt(LocalDateTime returnedAt) {
         this.returnedAt = returnedAt;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }
 

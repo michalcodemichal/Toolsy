@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,8 +39,13 @@ public class RentalService {
         User user = userService.findById(userId);
         Tool tool = toolService.getToolEntity(request.getToolId());
 
-        if (tool.getQuantity() <= 0) {
-            throw new RuntimeException("Narzędzie niedostępne");
+        int requestedQuantity = request.getQuantity() != null ? request.getQuantity() : 1;
+        if (requestedQuantity <= 0) {
+            throw new RuntimeException("Ilość musi być większa od zera");
+        }
+
+        if (tool.getQuantity() < requestedQuantity) {
+            throw new RuntimeException("Niewystarczająca ilość dostępnych narzędzi. Dostępne: " + tool.getQuantity());
         }
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
@@ -57,19 +63,24 @@ public class RentalService {
                 List.of(RentalStatus.PENDING, RentalStatus.ACTIVE)
         );
 
-        long rentedQuantity = overlappingRentals.size();
-        if (rentedQuantity >= tool.getQuantity()) {
-            throw new RuntimeException("Brak dostępnych narzędzi w wybranym terminie");
+        long rentedQuantity = overlappingRentals.stream()
+                .mapToInt(r -> r.getQuantity() != null ? r.getQuantity() : 1)
+                .sum();
+        
+        int availableQuantity = tool.getQuantity() - (int) rentedQuantity;
+        if (availableQuantity < requestedQuantity) {
+            throw new RuntimeException("Brak dostępnych narzędzi w wybranym terminie. Dostępne: " + availableQuantity);
         }
 
         long days = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate()) + 1;
-        BigDecimal totalPrice = tool.getDailyPrice().multiply(BigDecimal.valueOf(days));
+        BigDecimal totalPrice = tool.getDailyPrice().multiply(BigDecimal.valueOf(days)).multiply(BigDecimal.valueOf(requestedQuantity));
 
         Rental rental = new Rental();
         rental.setUser(user);
         rental.setTool(tool);
         rental.setStartDate(request.getStartDate());
         rental.setEndDate(request.getEndDate());
+        rental.setQuantity(requestedQuantity);
         rental.setTotalPrice(totalPrice);
         rental.setStatus(RentalStatus.PENDING);
         rental.setNotes(request.getNotes());
@@ -102,6 +113,16 @@ public class RentalService {
             throw new RuntimeException("Można zatwierdzić tylko wypożyczenia oczekujące");
         }
 
+        Tool tool = rental.getTool();
+        int rentalQuantity = rental.getQuantity() != null ? rental.getQuantity() : 1;
+        
+        if (tool.getQuantity() < rentalQuantity) {
+            throw new RuntimeException("Niewystarczająca ilość dostępnych narzędzi");
+        }
+
+        tool.setQuantity(tool.getQuantity() - rentalQuantity);
+        toolService.saveTool(tool);
+
         rental.setStatus(RentalStatus.ACTIVE);
         Rental updatedRental = rentalRepository.save(rental);
         
@@ -126,8 +147,13 @@ public class RentalService {
             throw new RuntimeException("Można zakończyć tylko aktywne wypożyczenia");
         }
 
+        Tool tool = rental.getTool();
+        int rentalQuantity = rental.getQuantity() != null ? rental.getQuantity() : 1;
+        tool.setQuantity(tool.getQuantity() + rentalQuantity);
+        toolService.saveTool(tool);
+
         rental.setStatus(RentalStatus.COMPLETED);
-        rental.setReturnedAt(java.time.LocalDateTime.now());
+        rental.setReturnedAt(LocalDateTime.now());
         Rental updatedRental = rentalRepository.save(rental);
         
         notificationService.sendRentalCompletedNotification(
@@ -197,6 +223,7 @@ public class RentalService {
         response.setToolName(rental.getTool().getName());
         response.setStartDate(rental.getStartDate());
         response.setEndDate(rental.getEndDate());
+        response.setQuantity(rental.getQuantity());
         response.setTotalPrice(rental.getTotalPrice());
         response.setStatus(rental.getStatus());
         response.setNotes(rental.getNotes());
