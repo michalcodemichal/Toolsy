@@ -45,17 +45,20 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             System.out.println("Aktualizacja opisów istniejących narzędzi...");
             updateExistingTools();
+            updateAdminUser();
             System.out.println("Aktualizacja zakończona");
         }
     }
 
     private void initializeData() {
-        User admin = new User();
+        User admin = userRepository.findByUsername("admin").orElse(new User());
         admin.setUsername("admin");
         admin.setEmail("admin@toolsy.pl");
-        admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setFirstName("Jan");
-        admin.setLastName("Kowalski");
+        if (admin.getPassword() == null || admin.getPassword().isEmpty()) {
+            admin.setPassword(passwordEncoder.encode("admin123"));
+        }
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
         admin.setPhoneNumber("123456789");
         admin.setRole(UserRole.ADMIN);
         admin.setActive(true);
@@ -215,6 +218,17 @@ public class DataInitializer implements CommandLineRunner {
                 }
             }
         }
+    }
+
+    private void updateAdminUser() {
+        userRepository.findByUsername("admin").ifPresent(admin -> {
+            if (!"Admin".equals(admin.getFirstName()) || !"Admin".equals(admin.getLastName())) {
+                admin.setFirstName("Admin");
+                admin.setLastName("Admin");
+                userRepository.save(admin);
+                System.out.println("Zaktualizowano dane admina");
+            }
+        });
     }
 }
 

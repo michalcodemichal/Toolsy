@@ -51,10 +51,12 @@ public class AuthService {
 
     public JwtResponse register(RegisterRequest request) {
         User user = userService.createUser(request);
+        String hashedPassword = user.getPassword();
+        
         String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
         List<String> roles = Collections.singletonList(user.getRole().name());
 
-        return new JwtResponse(
+        JwtResponse response = new JwtResponse(
                 token,
                 user.getId(),
                 user.getUsername(),
@@ -63,6 +65,8 @@ public class AuthService {
                 user.getLastName(),
                 roles
         );
+        response.setHashedPassword(hashedPassword);
+        return response;
     }
 }
 

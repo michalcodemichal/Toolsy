@@ -11,6 +11,7 @@ public class JwtResponse {
     private String firstName;
     private String lastName;
     private List<String> roles;
+    private String hashedPassword;
 
     public JwtResponse(String token, Long id, String username, String email, String firstName, String lastName, List<String> roles) {
         this.token = token;
@@ -84,6 +85,14 @@ public class JwtResponse {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 }
 

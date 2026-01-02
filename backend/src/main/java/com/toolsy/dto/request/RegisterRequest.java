@@ -2,6 +2,7 @@ package com.toolsy.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class RegisterRequest {
@@ -14,7 +15,9 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank
-    @Size(min = 6)
+    @Size(min = 6, message = "Hasło musi zawierać co najmniej 6 znaków")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>]).*$", 
+             message = "Hasło musi zawierać co najmniej jedną wielką literę i jeden znak specjalny")
     private String password;
 
     @NotBlank
