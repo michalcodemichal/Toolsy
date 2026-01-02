@@ -42,6 +42,10 @@ public class DataInitializer implements CommandLineRunner {
             initializeData();
             System.out.println("Dane testowe zainicjalizowane pomyślnie");
             System.out.println("Liczba narzędzi po inicjalizacji: " + toolRepository.count());
+        } else {
+            System.out.println("Aktualizacja opisów istniejących narzędzi...");
+            updateExistingTools();
+            System.out.println("Aktualizacja zakończona");
         }
     }
 
@@ -89,14 +93,39 @@ public class DataInitializer implements CommandLineRunner {
             "Uniwersalne narzędzie do cięcia i szlifowania różnych materiałów",
             "Wygodna wkrętarka z akumulatorem, idealna do prac domowych",
             "Mocne narzędzie do kucia i rozbiórki",
-            "Precyzyjna piła do cięcia drewna i materiałów drewnopochodnych"
+            "Precyzyjna piła do cięcia drewna i materiałów drewnopochodnych",
+            "Elektryczna wyrzynarka do precyzyjnego cięcia krzywoliniowego",
+            "Szlifierka oscylacyjna do prac wykończeniowych",
+            "Stabilna wiertarka stołowa do precyzyjnych otworów",
+            "Frezarka do obróbki drewna i tworzyw sztucznych",
+            "Strugarka do wyrównywania i wygładzania powierzchni drewnianych",
+            "Wkrętarka udarowa do mocnych połączeń",
+            "Klucz pneumatyczny do szybkiego dokręcania",
+            "Wiertarka SDS do betonu i kamienia",
+            "Szlifierka pasowa do wygładzania powierzchni",
+            "Piła łańcuchowa do cięcia drewna i gałęzi",
+            "Wiertarka kolumnowa do precyzyjnych otworów",
+            "Frezarka górnowrzecionowa do zaawansowanej obróbki",
+            "Szlifierka do metalu do usuwania zadziorów",
+            "Wiertarka ręczna do podstawowych prac",
+            "Bezprzewodowa wkrętarka z długim czasem pracy",
+            "Młotowiertarka do betonu i kamienia",
+            "Szlifierka do betonu do wygładzania powierzchni",
+            "Piła do drewna do precyzyjnego cięcia",
+            "Wiertarka do betonu z funkcją udarową",
+            "Klucz dynamometryczny do dokładnego dokręcania",
+            "Wkrętarka z wiertarką do uniwersalnych zastosowań",
+            "Szlifierka do kamienia do obróbki powierzchni",
+            "Piła do metalu do cięcia rur i profili",
+            "Wiertarka do metalu do precyzyjnych otworów",
+            "Klucz nasadowy z kompletnym zestawem nasadek"
         };
 
         List<Tool> tools = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             Tool tool = new Tool();
             tool.setName(toolNames[i]);
-            tool.setDescription(descriptions[i % descriptions.length] + " - model " + (i + 1));
+            tool.setDescription(descriptions[i]);
             tool.setCategory(categories[i % categories.length]);
             tool.setDailyPrice(new BigDecimal(20 + (i % 5) * 10));
             tool.setQuantity(3 + (i % 3));
@@ -115,6 +144,66 @@ public class DataInitializer implements CommandLineRunner {
             rental.setStatus(i % 2 == 0 ? RentalStatus.ACTIVE : RentalStatus.PENDING);
             rental.setNotes("Wypożyczenie testowe " + (i + 1));
             rentalRepository.save(rental);
+        }
+    }
+
+    private void updateExistingTools() {
+        String[] toolNames = {
+            "Wiertarka udarowa Bosch", "Szlifierka kątowa", "Wkrętarka akumulatorowa", "Młot pneumatyczny",
+            "Piła tarczowa", "Wyrzynarka", "Szlifierka oscylacyjna", "Wiertarka stołowa", "Frezarka", "Strugarka",
+            "Wkrętarka udarowa", "Klucz pneumatyczny", "Wiertarka SDS", "Szlifierka pasowa", "Piła łańcuchowa",
+            "Wiertarka kolumnowa", "Frezarka górnowrzecionowa", "Szlifierka do metalu", "Wiertarka ręczna", "Wkrętarka bezprzewodowa",
+            "Młotowiertarka", "Szlifierka do betonu", "Piła do drewna", "Wiertarka do betonu", "Klucz dynamometryczny",
+            "Wkrętarka z wiertarką", "Szlifierka do kamienia", "Piła do metalu", "Wiertarka do metalu", "Klucz nasadowy"
+        };
+
+        String[] descriptions = {
+            "Profesjonalne narzędzie do wiercenia w betonie i innych twardych materiałach",
+            "Uniwersalne narzędzie do cięcia i szlifowania różnych materiałów",
+            "Wygodna wkrętarka z akumulatorem, idealna do prac domowych",
+            "Mocne narzędzie do kucia i rozbiórki",
+            "Precyzyjna piła do cięcia drewna i materiałów drewnopochodnych",
+            "Elektryczna wyrzynarka do precyzyjnego cięcia krzywoliniowego",
+            "Szlifierka oscylacyjna do prac wykończeniowych",
+            "Stabilna wiertarka stołowa do precyzyjnych otworów",
+            "Frezarka do obróbki drewna i tworzyw sztucznych",
+            "Strugarka do wyrównywania i wygładzania powierzchni drewnianych",
+            "Wkrętarka udarowa do mocnych połączeń",
+            "Klucz pneumatyczny do szybkiego dokręcania",
+            "Wiertarka SDS do betonu i kamienia",
+            "Szlifierka pasowa do wygładzania powierzchni",
+            "Piła łańcuchowa do cięcia drewna i gałęzi",
+            "Wiertarka kolumnowa do precyzyjnych otworów",
+            "Frezarka górnowrzecionowa do zaawansowanej obróbki",
+            "Szlifierka do metalu do usuwania zadziorów",
+            "Wiertarka ręczna do podstawowych prac",
+            "Bezprzewodowa wkrętarka z długim czasem pracy",
+            "Młotowiertarka do betonu i kamienia",
+            "Szlifierka do betonu do wygładzania powierzchni",
+            "Piła do drewna do precyzyjnego cięcia",
+            "Wiertarka do betonu z funkcją udarową",
+            "Klucz dynamometryczny do dokładnego dokręcania",
+            "Wkrętarka z wiertarką do uniwersalnych zastosowań",
+            "Szlifierka do kamienia do obróbki powierzchni",
+            "Piła do metalu do cięcia rur i profili",
+            "Wiertarka do metalu do precyzyjnych otworów",
+            "Klucz nasadowy z kompletnym zestawem nasadek"
+        };
+
+        List<Tool> allTools = toolRepository.findAll();
+        for (Tool tool : allTools) {
+            String toolName = tool.getName();
+            for (int i = 0; i < toolNames.length; i++) {
+                if (toolNames[i].equals(toolName)) {
+                    String newDescription = descriptions[i];
+                    if (!newDescription.equals(tool.getDescription()) || tool.getDescription().contains("model")) {
+                        tool.setDescription(newDescription);
+                        toolRepository.save(tool);
+                        System.out.println("Zaktualizowano: " + toolName);
+                    }
+                    break;
+                }
+            }
         }
     }
 }

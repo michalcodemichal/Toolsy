@@ -3,7 +3,6 @@ import { getTools, searchTools, getToolsByCategory, getToolsSorted } from '../se
 import ToolCard from '../components/ToolCard'
 import Input from '../components/Input'
 import Loading from '../components/Loading'
-import './ToolList.css'
 
 const ToolList = () => {
   const [tools, setTools] = useState([])
@@ -101,65 +100,68 @@ const ToolList = () => {
   }
 
   return (
-    <div className="tool-list-container">
-      <div className="tool-list-header">
-        <h1>Katalog narzędzi</h1>
-      </div>
-
-      <div className="tool-list-filters">
-        <Input
-          placeholder="Szukaj narzędzi..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value)
-            setSelectedCategory('')
-          }}
-          className="search-input"
-        />
-        <select
-          value={selectedCategory}
-          onChange={(e) => {
-            setSelectedCategory(e.target.value)
-            setSearchTerm('')
-          }}
-          className="category-select"
-        >
-          <option value="">Wszystkie kategorie</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value)
-          }}
-          className="sort-select"
-        >
-          <option value="">Sortuj</option>
-          <option value="name">Nazwa</option>
-          <option value="price">Cena</option>
-          <option value="category">Kategoria</option>
-        </select>
-        {sortBy && (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">Katalog narzędzi</h1>
+        <div className="flex flex-wrap gap-4 mb-6 items-center">
+          <div className="w-64">
+            <Input
+              placeholder="Szukaj narzędzi..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setSelectedCategory('')
+              }}
+              className="mb-0"
+            />
+          </div>
           <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="sort-order-select"
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value)
+              setSearchTerm('')
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white h-10"
           >
-            <option value="asc">Rosnąco</option>
-            <option value="desc">Malejąco</option>
+            <option value="">Wszystkie kategorie</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
-        )}
+          <select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value)
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white h-10"
+          >
+            <option value="">Sortuj</option>
+            <option value="name">Nazwa</option>
+            <option value="price">Cena</option>
+            <option value="category">Kategoria</option>
+          </select>
+          {sortBy && (
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white h-10"
+            >
+              <option value="asc">Rosnąco</option>
+              <option value="desc">Malejąco</option>
+            </select>
+          )}
+        </div>
       </div>
 
-      <div className="tool-list-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTools.length > 0 ? (
           filteredTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)
         ) : (
-          <p className="empty-message">Brak narzędzi do wyświetlenia</p>
+          <div className="col-span-full text-center text-gray-500 py-12 text-lg">
+            Brak narzędzi do wyświetlenia
+          </div>
         )}
       </div>
     </div>

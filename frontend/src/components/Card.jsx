@@ -1,9 +1,11 @@
 import React from 'react'
-import './Card.css'
 
 const Card = ({ children, className = '', onClick }) => {
+  const baseClasses = 'bg-white rounded-lg shadow-md p-6 transition-shadow'
+  const clickableClasses = onClick ? 'cursor-pointer hover:shadow-lg' : ''
+  
   return (
-    <div className={`card ${onClick ? 'card-clickable' : ''} ${className}`} onClick={onClick}>
+    <div className={`${baseClasses} ${clickableClasses} ${className}`} onClick={onClick}>
       {children}
     </div>
   )
