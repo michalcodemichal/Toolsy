@@ -28,11 +28,11 @@ public class StatisticsService {
     public StatisticsResponse getStatistics() {
         StatisticsResponse stats = new StatisticsResponse();
         
-        stats.setTotalTools(toolRepository.count());
-        stats.setTotalUsers(userRepository.count());
-        stats.setTotalRentals(rentalRepository.count());
-        stats.setActiveRentals(rentalRepository.findByStatus(RentalStatus.ACTIVE).size());
-        stats.setAvailableTools(toolRepository.findByStatus(ToolStatus.AVAILABLE).size());
+        stats.setTotalTools((long) toolRepository.count());
+        stats.setTotalUsers((long) userRepository.count());
+        stats.setTotalRentals((long) rentalRepository.count());
+        stats.setActiveRentals((long) rentalRepository.findByStatus(RentalStatus.ACTIVE).size());
+        stats.setAvailableTools((long) toolRepository.findByStatus(ToolStatus.AVAILABLE).size());
         
         BigDecimal totalRevenue = rentalRepository.findAll().stream()
                 .filter(r -> r.getTotalPrice() != null && 
