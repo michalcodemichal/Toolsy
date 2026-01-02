@@ -103,12 +103,20 @@ const Register = () => {
             placeholder="Wprowadź hasło"
           />
           {passwordError && (
-            <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+            <div className="mt-2 p-3 bg-red-50 border-2 border-red-200 rounded-xl">
+              <p className="text-red-600 text-sm font-semibold flex items-center gap-2">
+                <span>⚠️</span> {passwordError}
+              </p>
+            </div>
           )}
           {hashedPassword && (
-            <div className="mt-4 p-3 bg-gray-100 rounded">
-              <p className="text-sm font-semibold mb-1">Zahashowane hasło:</p>
-              <p className="text-xs break-all text-gray-700">{hashedPassword}</p>
+            <div className="mt-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl shadow-md">
+              <p className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                <span>🔐</span> Zahashowane hasło:
+              </p>
+              <p className="text-xs break-all text-gray-700 font-mono bg-white/80 p-2 rounded border border-gray-200">
+                {hashedPassword}
+              </p>
             </div>
           )}
           <Input

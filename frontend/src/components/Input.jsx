@@ -4,8 +4,8 @@ const Input = ({ label, type = 'text', value, onChange, error, placeholder, requ
   const isTextarea = type === 'textarea'
   const inputType = isTextarea ? undefined : type
 
-  const baseInputClasses = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors h-10"
-  const errorClasses = error ? "border-red-500 focus:ring-red-500" : ""
+  const baseInputClasses = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 h-10 bg-white/80 backdrop-blur-sm hover:border-gray-300 focus:bg-white shadow-sm focus:shadow-md"
+  const errorClasses = error ? "border-red-400 focus:ring-red-400 focus:border-red-500" : ""
 
   return (
     <div className={`${className.includes('mb-0') ? '' : 'mb-4'} ${className}`}>
