@@ -95,6 +95,12 @@ const AdminPanel = () => {
   const handleToolSubmit = async (e) => {
     e.preventDefault()
     try {
+      const token = localStorage.getItem('token')
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      console.log('Token:', token ? 'Obecny' : 'Brak')
+      console.log('User:', user)
+      console.log('User roles:', user.roles)
+      
       const toolData = {
         ...toolForm,
         dailyPrice: parseFloat(toolForm.dailyPrice),
@@ -123,6 +129,8 @@ const AdminPanel = () => {
     } catch (error) {
       console.error('Błąd zapisywania narzędzia:', error)
       console.error('Szczegóły błędu:', error.response?.data || error.message)
+      console.error('Status:', error.response?.status)
+      console.error('Headers:', error.response?.headers)
       toast.error(error.response?.data?.message || error.response?.data?.error || 'Błąd zapisywania narzędzia')
     }
   }

@@ -39,26 +39,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("Request: " + method + " " + path);
+        System.out.println("Authorization header: " + (authHeader != null ? "Present" : "Missing"));
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             try {
                 String token = authHeader.substring(7);
                 String username = jwtService.extractUsername(token);
+                System.out.println("Extracted username: " + username);
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    try {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        System.out.println("User authorities: " + userDetails.getAuthorities());
 
-                    if (jwtService.validateToken(token, username)) {
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        if (jwtService.validateToken(token, username)) {
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            System.out.println("Authentication set successfully");
+                        } else {
+                            System.out.println("Token validation failed");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Błąd podczas weryfikacji tokenu: " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             } catch (Exception e) {
-                filterChain.doFilter(request, response);
-                return;
+                System.err.println("Błąd podczas przetwarzania tokenu: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("No Authorization header or not Bearer token");
         }
 
         filterChain.doFilter(request, response);
