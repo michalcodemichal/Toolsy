@@ -31,8 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String path = request.getRequestURI();
+        String method = request.getMethod();
         
-        if (isPublicPath(path)) {
+        if (isPublicPath(path, method)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -63,14 +64,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isPublicPath(String path) {
-        return path.startsWith("/api/auth/") ||
-               path.startsWith("/api/health/") ||
-               path.startsWith("/api/tools/") ||
-               path.startsWith("/h2-console/") ||
-               path.startsWith("/swagger-ui/") ||
-               path.startsWith("/v3/api-docs/") ||
-               path.startsWith("/uploads/");
+    private boolean isPublicPath(String path, String method) {
+        if (path.startsWith("/api/auth/") ||
+            path.startsWith("/api/health/") ||
+            path.startsWith("/h2-console/") ||
+            path.startsWith("/swagger-ui/") ||
+            path.startsWith("/v3/api-docs/") ||
+            path.startsWith("/uploads/")) {
+            return true;
+        }
+        
+        if (path.startsWith("/api/tools/")) {
+            return "GET".equalsIgnoreCase(method);
+        }
+        
+        return false;
     }
 }
 
