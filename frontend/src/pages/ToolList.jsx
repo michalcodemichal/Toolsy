@@ -103,12 +103,12 @@ const ToolList = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-10">
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-8 text-white shadow-2xl mb-8">
+        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-700 dark:via-indigo-700 dark:to-purple-700 rounded-3xl p-8 text-white shadow-2xl mb-8">
           <h1 className="text-5xl font-extrabold mb-2 flex items-center gap-3">
             <span>🔧</span>
             Katalog narzędzi
           </h1>
-          <p className="text-xl text-blue-100">Znajdź idealne narzędzie dla swoich projektów</p>
+          <p className="text-xl text-blue-100 dark:text-blue-200">Znajdź idealne narzędzie dla swoich projektów</p>
         </div>
         <Card className="p-6 mb-8">
           <div className="flex flex-wrap gap-4 items-center">
@@ -129,7 +129,7 @@ const ToolList = () => {
                 setSelectedCategory(e.target.value)
                 setSearchTerm('')
               }}
-              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 transition-all font-medium"
+              className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
             >
               <option value="">📂 Wszystkie kategorie</option>
               {categories.map((category) => (
@@ -143,7 +143,7 @@ const ToolList = () => {
               onChange={(e) => {
                 setSortBy(e.target.value)
               }}
-              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 transition-all font-medium"
+              className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
             >
               <option value="">🔀 Sortuj</option>
               <option value="name">Nazwa</option>
@@ -154,7 +154,7 @@ const ToolList = () => {
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 transition-all font-medium"
+                className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
               >
                 <option value="asc">⬆️ Rosnąco</option>
                 <option value="desc">⬇️ Malejąco</option>
@@ -170,8 +170,8 @@ const ToolList = () => {
         ) : (
           <Card className="col-span-full text-center py-16">
             <div className="text-7xl mb-4">🔍</div>
-            <p className="text-gray-500 text-xl font-semibold">Brak narzędzi do wyświetlenia</p>
-            <p className="text-gray-400 mt-2">Spróbuj zmienić kryteria wyszukiwania</p>
+            <p className="text-gray-500 dark:text-gray-400 text-xl font-semibold">Brak narzędzi do wyświetlenia</p>
+            <p className="text-gray-400 dark:text-gray-500 mt-2">Spróbuj zmienić kryteria wyszukiwania</p>
           </Card>
         )}
       </div>
