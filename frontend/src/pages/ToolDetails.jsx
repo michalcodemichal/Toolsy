@@ -101,7 +101,7 @@ const ToolDetails = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="p-0 overflow-hidden">
-          <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+          <div className="w-full h-[500px] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
             {tool.imageUrl ? (
               <img 
                 src={tool.imageUrl.startsWith('http') ? tool.imageUrl : `http://localhost:8080${tool.imageUrl}`} 
@@ -109,43 +109,43 @@ const ToolDetails = () => {
                 className="w-full h-full object-contain"
                 onError={(e) => {
                   e.target.style.display = 'none'
-                  e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 text-8xl">🔧</div>'
+                  e.target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-8xl">🔧</div>'
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-8xl">🔧</div>
+              <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-8xl">🔧</div>
             )}
           </div>
         </Card>
         <div className="space-y-6">
           <Card variant="gradient">
             <div className="mb-4">
-              <h1 className="text-4xl font-extrabold text-gray-900 mb-3">{tool.name}</h1>
-              <span className="inline-block px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold">
+              <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-3">{tool.name}</h1>
+              <span className="inline-block px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-bold">
                 {tool.category}
               </span>
             </div>
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">{tool.description}</p>
+            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-6">{tool.description}</p>
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200">
-                <p className="text-sm text-gray-600 mb-1">Cena dzienna</p>
-                <p className="text-3xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-xl border-2 border-green-200 dark:border-green-800">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Cena dzienna</p>
+                <p className="text-3xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
                   {tool.dailyPrice} zł
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200">
-                <p className="text-sm text-gray-600 mb-1">Dostępna ilość</p>
-                <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Dostępna ilość</p>
+                <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
                   {tool.quantity}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-md ${
-                tool.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' :
-                tool.status === 'RENTED' ? 'bg-red-100 text-red-800' :
-                tool.status === 'MAINTENANCE' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-gray-100 text-gray-800'
+                tool.status === 'AVAILABLE' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                tool.status === 'RENTED' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                tool.status === 'MAINTENANCE' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
+                'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300'
               }`}>
                 {tool.status === 'AVAILABLE' && '✅ Dostępne'}
                 {tool.status === 'RENTED' && '❌ Wypożyczone'}
@@ -162,7 +162,7 @@ const ToolDetails = () => {
                 </Button>
               ) : (
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
                     <span>📝</span> Formularz wypożyczenia
                   </h3>
                   <form onSubmit={handleRentalSubmit} className="space-y-4">
@@ -228,7 +228,7 @@ const ToolDetails = () => {
           )}
           {!user && (
             <Card className="text-center py-8">
-              <p className="text-gray-600 text-lg mb-4">
+              <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">
                 Zaloguj się, aby wypożyczyć narzędzie
               </p>
               <Button onClick={() => navigate('/login')} className="gradient-primary">
