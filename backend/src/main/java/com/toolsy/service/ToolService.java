@@ -60,6 +60,20 @@ public class ToolService {
                 .collect(Collectors.toList());
     }
 
+    public List<ToolResponse> getAvailableToolsForPeriod(LocalDate startDate, LocalDate endDate) {
+        List<Tool> allTools = toolRepository.findAvailableTools(ToolStatus.AVAILABLE);
+        
+        return allTools.stream()
+                .map(tool -> {
+                    ToolResponse response = mapToResponse(tool);
+                    int availableQuantity = calculateAvailableQuantity(tool, startDate, endDate);
+                    response.setQuantity(availableQuantity);
+                    return response;
+                })
+                .filter(tool -> tool.getQuantity() > 0) 
+                .collect(Collectors.toList());
+    }
+
     public ToolResponse getToolById(Long id) {
         Tool tool = toolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Narzędzie nie znalezione"));

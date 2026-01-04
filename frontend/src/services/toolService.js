@@ -48,3 +48,8 @@ export const getToolsSorted = async (sortBy, sortOrder = 'asc') => {
   return response.data
 }
 
+export const getAvailableToolsForPeriod = async (startDate, endDate) => {
+  const response = await api.get(`/tools/available-for-period?startDate=${startDate}&endDate=${endDate}`)
+  return response.data
+}
+
