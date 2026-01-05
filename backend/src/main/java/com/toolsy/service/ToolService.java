@@ -1,6 +1,7 @@
 package com.toolsy.service;
 
 import com.toolsy.dto.request.CreateToolRequest;
+import com.toolsy.dto.response.PagedResponse;
 import com.toolsy.dto.response.ToolResponse;
 import com.toolsy.model.Tool;
 import com.toolsy.model.ToolStatus;
@@ -9,6 +10,10 @@ import com.toolsy.model.RentalStatus;
 import com.toolsy.repository.ToolRepository;
 import com.toolsy.repository.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -146,6 +151,76 @@ public class ToolService {
         return tools.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public PagedResponse<ToolResponse> getAllToolsPaginated(int page, int size, String sortBy, String sortOrder) {
+        Pageable pageable = createPageable(page, size, sortBy, sortOrder);
+        Page<Tool> toolPage = toolRepository.findAll(pageable);
+        
+        return mapToPagedResponse(toolPage);
+    }
+
+    public PagedResponse<ToolResponse> getAvailableToolsPaginated(int page, int size, String sortBy, String sortOrder) {
+        Pageable pageable = createPageable(page, size, sortBy, sortOrder);
+        Page<Tool> toolPage = toolRepository.findAvailableToolsPageable(ToolStatus.AVAILABLE, pageable);
+        
+        return mapToPagedResponse(toolPage);
+    }
+
+    public PagedResponse<ToolResponse> searchToolsPaginated(String searchTerm, int page, int size, String sortBy, String sortOrder) {
+        Pageable pageable = createPageable(page, size, sortBy, sortOrder);
+        Page<Tool> toolPage = toolRepository.searchToolsPageable(searchTerm, pageable);
+        
+        return mapToPagedResponse(toolPage);
+    }
+
+    public PagedResponse<ToolResponse> getToolsByCategoryPaginated(String category, int page, int size, String sortBy, String sortOrder) {
+        Pageable pageable = createPageable(page, size, sortBy, sortOrder);
+        Page<Tool> toolPage = toolRepository.findByCategory(category, pageable);
+        
+        return mapToPagedResponse(toolPage);
+    }
+
+    private Pageable createPageable(int page, int size, String sortBy, String sortOrder) {
+        Sort sort = Sort.unsorted();
+        
+        if (sortBy != null && !sortBy.isEmpty()) {
+            Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            
+            switch (sortBy.toLowerCase()) {
+                case "name":
+                    sort = Sort.by(direction, "name");
+                    break;
+                case "price":
+                    sort = Sort.by(direction, "dailyPrice");
+                    break;
+                case "category":
+                    sort = Sort.by(direction, "category");
+                    break;
+                default:
+                    sort = Sort.by(Sort.Direction.ASC, "id");
+            }
+        } else {
+            sort = Sort.by(Sort.Direction.ASC, "id");
+        }
+        
+        return PageRequest.of(page, size, sort);
+    }
+
+    private PagedResponse<ToolResponse> mapToPagedResponse(Page<Tool> toolPage) {
+        List<ToolResponse> content = toolPage.getContent().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        
+        return new PagedResponse<>(
+                content,
+                toolPage.getNumber(),
+                toolPage.getSize(),
+                toolPage.getTotalElements(),
+                toolPage.getTotalPages(),
+                toolPage.isFirst(),
+                toolPage.isLast()
+        );
     }
 
     public ToolResponse updateTool(Long id, CreateToolRequest request) {

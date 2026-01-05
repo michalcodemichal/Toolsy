@@ -1,12 +1,28 @@
 import api from './api'
 
-export const getTools = async () => {
-  const response = await api.get('/tools')
+export const getTools = async (page = null, size = null, sortBy = null, sortOrder = 'asc') => {
+  const params = new URLSearchParams()
+  if (page !== null) params.append('page', page)
+  if (size !== null) params.append('size', size)
+  if (sortBy) params.append('sortBy', sortBy)
+  if (sortOrder) params.append('sortOrder', sortOrder)
+  
+  const queryString = params.toString()
+  const url = queryString ? `/tools?${queryString}` : '/tools'
+  const response = await api.get(url)
   return response.data
 }
 
-export const getAvailableTools = async () => {
-  const response = await api.get('/tools/available')
+export const getAvailableTools = async (page = null, size = null, sortBy = null, sortOrder = 'asc') => {
+  const params = new URLSearchParams()
+  if (page !== null) params.append('page', page)
+  if (size !== null) params.append('size', size)
+  if (sortBy) params.append('sortBy', sortBy)
+  if (sortOrder) params.append('sortOrder', sortOrder)
+  
+  const queryString = params.toString()
+  const url = queryString ? `/tools/available?${queryString}` : '/tools/available'
+  const response = await api.get(url)
   return response.data
 }
 
@@ -19,13 +35,28 @@ export const getToolById = async (id, startDate = null, endDate = null) => {
   return response.data
 }
 
-export const searchTools = async (query) => {
-  const response = await api.get(`/tools/search?q=${query}`)
+export const searchTools = async (query, page = null, size = null, sortBy = null, sortOrder = 'asc') => {
+  const params = new URLSearchParams()
+  params.append('q', query)
+  if (page !== null) params.append('page', page)
+  if (size !== null) params.append('size', size)
+  if (sortBy) params.append('sortBy', sortBy)
+  if (sortOrder) params.append('sortOrder', sortOrder)
+  
+  const response = await api.get(`/tools/search?${params.toString()}`)
   return response.data
 }
 
-export const getToolsByCategory = async (category) => {
-  const response = await api.get(`/tools/category/${category}`)
+export const getToolsByCategory = async (category, page = null, size = null, sortBy = null, sortOrder = 'asc') => {
+  const params = new URLSearchParams()
+  if (page !== null) params.append('page', page)
+  if (size !== null) params.append('size', size)
+  if (sortBy) params.append('sortBy', sortBy)
+  if (sortOrder) params.append('sortOrder', sortOrder)
+  
+  const queryString = params.toString()
+  const url = queryString ? `/tools/category/${category}?${queryString}` : `/tools/category/${category}`
+  const response = await api.get(url)
   return response.data
 }
 

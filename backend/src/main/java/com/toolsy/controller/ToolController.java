@@ -1,6 +1,7 @@
 package com.toolsy.controller;
 
 import com.toolsy.dto.request.CreateToolRequest;
+import com.toolsy.dto.response.PagedResponse;
 import com.toolsy.dto.response.ToolResponse;
 import com.toolsy.service.ToolService;
 import jakarta.validation.Valid;
@@ -24,13 +25,33 @@ public class ToolController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ToolResponse>> getAllTools() {
+    public ResponseEntity<?> getAllTools(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        
+        if (page != null && size != null) {
+            PagedResponse<ToolResponse> pagedResponse = toolService.getAllToolsPaginated(page, size, sortBy, sortOrder);
+            return ResponseEntity.ok(pagedResponse);
+        }
+        
         List<ToolResponse> tools = toolService.getAllTools();
         return ResponseEntity.ok(tools);
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<ToolResponse>> getAvailableTools() {
+    public ResponseEntity<?> getAvailableTools(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        
+        if (page != null && size != null) {
+            PagedResponse<ToolResponse> pagedResponse = toolService.getAvailableToolsPaginated(page, size, sortBy, sortOrder);
+            return ResponseEntity.ok(pagedResponse);
+        }
+        
         List<ToolResponse> tools = toolService.getAvailableTools();
         return ResponseEntity.ok(tools);
     }
@@ -66,13 +87,35 @@ public class ToolController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ToolResponse>> getToolsByCategory(@PathVariable String category) {
+    public ResponseEntity<?> getToolsByCategory(
+            @PathVariable String category,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        
+        if (page != null && size != null) {
+            PagedResponse<ToolResponse> pagedResponse = toolService.getToolsByCategoryPaginated(category, page, size, sortBy, sortOrder);
+            return ResponseEntity.ok(pagedResponse);
+        }
+        
         List<ToolResponse> tools = toolService.getToolsByCategory(category);
         return ResponseEntity.ok(tools);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ToolResponse>> searchTools(@RequestParam String q) {
+    public ResponseEntity<?> searchTools(
+            @RequestParam String q,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        
+        if (page != null && size != null) {
+            PagedResponse<ToolResponse> pagedResponse = toolService.searchToolsPaginated(q, page, size, sortBy, sortOrder);
+            return ResponseEntity.ok(pagedResponse);
+        }
+        
         List<ToolResponse> tools = toolService.searchTools(q);
         return ResponseEntity.ok(tools);
     }

@@ -3,17 +3,16 @@ import {
   getTools,
   searchTools,
   getToolsByCategory,
-  getToolsSorted,
   getAvailableToolsForPeriod,
 } from "../services/toolService";
 import ToolCard from "../components/ToolCard";
 import Input from "../components/Input";
 import Loading from "../components/Loading";
 import Card from "../components/Card";
+import Pagination from "../components/Pagination";
 
 const ToolList = () => {
   const [tools, setTools] = useState([]);
-  const [filteredTools, setFilteredTools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -21,140 +20,151 @@ const ToolList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  
+  // Paginacja
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(12);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [allCategories, setAllCategories] = useState([]);
+
+  // Pobierz wszystkie kategorie przy pierwszym załadowaniu
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getTools(0, 1000); // Pobierz dużo, żeby mieć wszystkie kategorie
+        const categories = data.content 
+          ? [...new Set(data.content.map((tool) => tool.category))]
+          : [...new Set(data.map((tool) => tool.category))];
+        setAllCategories(categories);
+      } catch (error) {
+        console.error("Błąd pobierania kategorii:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
-    const fetchTools = async () => {
+    const fetchToolsData = async () => {
+      setLoading(true);
       try {
-        console.log("Pobieranie narzędzi...");
-        const data = await getTools();
-        console.log("Otrzymane dane:", data);
-        if (data && Array.isArray(data)) {
-          console.log("Liczba narzędzi:", data.length);
-          setTools(data);
-          setFilteredTools(data);
+        let response;
+
+        // Jeśli są daty, użyj specjalnego endpointu (bez paginacji, bo to już filtrowane)
+        if (startDate && endDate) {
+          const allTools = await getAvailableToolsForPeriod(startDate, endDate);
+          const toolsArray = Array.isArray(allTools) ? allTools : allTools.content || [];
+          
+          // Filtruj po stronie klienta dla dat
+          let filtered = toolsArray;
+          if (searchTerm) {
+            filtered = filtered.filter(
+              (tool) =>
+                tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+          }
+          if (selectedCategory) {
+            filtered = filtered.filter((tool) => tool.category === selectedCategory);
+          }
+
+          // Sortowanie po stronie klienta
+          if (sortBy) {
+            filtered.sort((a, b) => {
+              let result = 0;
+              switch (sortBy.toLowerCase()) {
+                case "name":
+                  result = a.name.localeCompare(b.name);
+                  break;
+                case "price":
+                  result = parseFloat(a.dailyPrice) - parseFloat(b.dailyPrice);
+                  break;
+                case "category":
+                  result = a.category.localeCompare(b.category);
+                  break;
+                default:
+                  return 0;
+              }
+              return sortOrder === "desc" ? -result : result;
+            });
+          }
+
+          // Paginacja po stronie klienta
+          const startIndex = currentPage * pageSize;
+          const endIndex = startIndex + pageSize;
+          const paginatedTools = filtered.slice(startIndex, endIndex);
+          
+          setTools(paginatedTools);
+          setTotalPages(Math.ceil(filtered.length / pageSize));
+          setTotalElements(filtered.length);
         } else {
-          console.warn("Dane nie są tablicą:", data);
-          setTools([]);
-          setFilteredTools([]);
+          // Użyj paginacji po stronie serwera
+          if (searchTerm) {
+            response = await searchTools(searchTerm, currentPage, pageSize, sortBy, sortOrder);
+          } else if (selectedCategory) {
+            response = await getToolsByCategory(selectedCategory, currentPage, pageSize, sortBy, sortOrder);
+          } else {
+            response = await getTools(currentPage, pageSize, sortBy, sortOrder);
+          }
+
+          if (response.content) {
+            // Odpowiedź z paginacją
+            setTools(response.content);
+            setTotalPages(response.totalPages);
+            setTotalElements(response.totalElements);
+          } else {
+            // Fallback dla starych endpointów bez paginacji
+            const toolsArray = Array.isArray(response) ? response : [];
+            setTools(toolsArray);
+            setTotalPages(1);
+            setTotalElements(toolsArray.length);
+          }
         }
       } catch (error) {
         console.error("Błąd ładowania narzędzi:", error);
-        console.error(
-          "Szczegóły błędu:",
-          error.response?.data || error.message
-        );
         setTools([]);
-        setFilteredTools([]);
+        setTotalPages(0);
+        setTotalElements(0);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTools();
-  }, []);
+    fetchToolsData();
+  }, [currentPage, pageSize, searchTerm, selectedCategory, sortBy, sortOrder, startDate, endDate]);
 
-  useEffect(() => {
-    const filterTools = async () => {
-      let filtered = [];
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-      if (startDate && endDate) {
-        try {
-          console.log(
-            "Pobieranie narzędzi dla okresu:",
-            startDate,
-            "-",
-            endDate
-          );
-          filtered = await getAvailableToolsForPeriod(startDate, endDate);
-          console.log("Otrzymano narzędzi:", filtered.length);
-        } catch (error) {
-          console.error("Błąd pobierania dostępnych narzędzi:", error);
-          console.error(
-            "Szczegóły błędu:",
-            error.response?.data || error.message
-          );
-          filtered = [];
-        }
-      } else if (searchTerm) {
-        try {
-          filtered = await searchTools(searchTerm);
-        } catch (error) {
-          console.error("Błąd wyszukiwania:", error);
-          filtered = [];
-        }
-      } else if (selectedCategory) {
-        try {
-          filtered = await getToolsByCategory(selectedCategory);
-        } catch (error) {
-          console.error("Błąd filtrowania:", error);
-          filtered = [];
-        }
-      } else {
-        filtered = [...tools];
-      }
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setSelectedCategory("");
+    setCurrentPage(0);
+  };
 
-      if (startDate && endDate) {
-        if (searchTerm) {
-          filtered = filtered.filter(
-            (tool) =>
-              tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              tool.description.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        }
-        if (selectedCategory) {
-          filtered = filtered.filter(
-            (tool) => tool.category === selectedCategory
-          );
-        }
-      }
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    setSearchTerm("");
+    setCurrentPage(0);
+  };
 
-      if (sortBy && filtered.length > 0) {
-        filtered.sort((a, b) => {
-          let result = 0;
-          switch (sortBy.toLowerCase()) {
-            case "name":
-              result = a.name.localeCompare(b.name);
-              break;
-            case "price":
-              result = parseFloat(a.dailyPrice) - parseFloat(b.dailyPrice);
-              break;
-            case "category":
-              result = a.category.localeCompare(b.category);
-              break;
-            default:
-              return 0;
-          }
-          return sortOrder === "desc" ? -result : result;
-        });
-      }
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+    setCurrentPage(0);
+  };
 
-      setFilteredTools(filtered);
-    };
+  const handleSortOrderChange = (e) => {
+    setSortOrder(e.target.value);
+    setCurrentPage(0);
+  };
 
-    if (
-      tools.length > 0 ||
-      searchTerm ||
-      selectedCategory ||
-      (startDate && endDate)
-    ) {
-      filterTools();
-    } else if (tools.length === 0 && !loading) {
-      setFilteredTools([]);
-    }
-  }, [
-    searchTerm,
-    selectedCategory,
-    sortBy,
-    sortOrder,
-    tools,
-    loading,
-    startDate,
-    endDate,
-  ]);
+  const handleDateChange = () => {
+    setCurrentPage(0);
+  };
 
-  const categories = [...new Set(tools.map((tool) => tool.category))];
-
-  if (loading) {
+  if (loading && currentPage === 0) {
     return <Loading />;
   }
 
@@ -176,10 +186,7 @@ const ToolList = () => {
               <Input
                 placeholder="🔍 Szukaj narzędzi..."
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setSelectedCategory("");
-                }}
+                onChange={handleSearchChange}
                 className="mb-0"
               />
             </div>
@@ -192,6 +199,7 @@ const ToolList = () => {
                   if (e.target.value && endDate && e.target.value > endDate) {
                     setEndDate("");
                   }
+                  handleDateChange();
                 }}
                 min={new Date().toISOString().split("T")[0]}
                 className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full"
@@ -208,7 +216,10 @@ const ToolList = () => {
               <input
                 type="date"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                  handleDateChange();
+                }}
                 min={startDate || new Date().toISOString().split("T")[0]}
                 className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full"
                 onFocus={(e) => e.target.showPicker?.()}
@@ -225,6 +236,7 @@ const ToolList = () => {
                 onClick={() => {
                   setStartDate("");
                   setEndDate("");
+                  handleDateChange();
                 }}
                 className="px-4 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl h-10"
                 title="Wyczyść daty"
@@ -234,14 +246,11 @@ const ToolList = () => {
             )}
             <select
               value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                setSearchTerm("");
-              }}
+              onChange={handleCategoryChange}
               className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
             >
               <option value="">📂 Wszystkie kategorie</option>
-              {categories.map((category) => (
+              {allCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
                 </option>
@@ -249,9 +258,7 @@ const ToolList = () => {
             </select>
             <select
               value={sortBy}
-              onChange={(e) => {
-                setSortBy(e.target.value);
-              }}
+              onChange={handleSortChange}
               className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
             >
               <option value="">🔀 Sortuj</option>
@@ -262,7 +269,7 @@ const ToolList = () => {
             {sortBy && (
               <select
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
+                onChange={handleSortOrderChange}
                 className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
               >
                 <option value="asc">⬆️ Rosnąco</option>
@@ -270,24 +277,46 @@ const ToolList = () => {
               </select>
             )}
           </div>
+          {totalElements > 0 && (
+            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              Wyświetlanie {currentPage * pageSize + 1} - {Math.min((currentPage + 1) * pageSize, totalElements)} z {totalElements} narzędzi
+            </div>
+          )}
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTools.length > 0 ? (
-          filteredTools.map((tool) => <ToolCard key={tool.id} tool={tool} />)
-        ) : (
-          <Card className="col-span-full text-center py-16">
-            <div className="text-7xl mb-4">🔍</div>
-            <p className="text-gray-500 dark:text-gray-400 text-xl font-semibold">
-              Brak narzędzi do wyświetlenia
-            </p>
-            <p className="text-gray-400 dark:text-gray-500 mt-2">
-              Spróbuj zmienić kryteria wyszukiwania
-            </p>
-          </Card>
-        )}
-      </div>
+      {loading && currentPage > 0 ? (
+        <div className="text-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {tools.length > 0 ? (
+              tools.map((tool) => <ToolCard key={tool.id} tool={tool} />)
+            ) : (
+              <Card className="col-span-full text-center py-16">
+                <div className="text-7xl mb-4">🔍</div>
+                <p className="text-gray-500 dark:text-gray-400 text-xl font-semibold">
+                  Brak narzędzi do wyświetlenia
+                </p>
+                <p className="text-gray-400 dark:text-gray-500 mt-2">
+                  Spróbuj zmienić kryteria wyszukiwania
+                </p>
+              </Card>
+            )}
+          </div>
+
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="mt-8"
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };
