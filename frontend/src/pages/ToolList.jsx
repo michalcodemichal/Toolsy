@@ -23,7 +23,7 @@ const ToolList = () => {
   
   // Paginacja
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(12);
+  const [pageSize, setPageSize] = useState(12);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [allCategories, setAllCategories] = useState([]);
@@ -164,6 +164,11 @@ const ToolList = () => {
     setCurrentPage(0);
   };
 
+  const handlePageSizeChange = (e) => {
+    setPageSize(parseInt(e.target.value));
+    setCurrentPage(0);
+  };
+
   if (loading && currentPage === 0) {
     return <Loading />;
   }
@@ -276,6 +281,27 @@ const ToolList = () => {
                 <option value="desc">⬇️ Malejąco</option>
               </select>
             )}
+            <div className="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-1 border-2 border-gray-200 dark:border-gray-700 shadow-sm">
+              <span className="px-3 text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                📊 Na stronę:
+              </span>
+              {[6, 12, 24, 48].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => {
+                    setPageSize(size);
+                    setCurrentPage(0);
+                  }}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                    pageSize === size
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white shadow-md scale-105'
+                      : 'bg-transparent hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
           {totalElements > 0 && (
             <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
