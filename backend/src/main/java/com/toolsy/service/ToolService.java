@@ -26,11 +26,22 @@ import java.util.stream.Collectors;
 public class ToolService {
     private final ToolRepository toolRepository;
     private final RentalRepository rentalRepository;
+    private org.springframework.context.ApplicationContext applicationContext;
 
     @Autowired
-    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository) {
+    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository,
+                      org.springframework.context.ApplicationContext applicationContext) {
         this.toolRepository = toolRepository;
         this.rentalRepository = rentalRepository;
+        this.applicationContext = applicationContext;
+    }
+
+    private ReviewService getReviewService() {
+        try {
+            return applicationContext.getBean(ReviewService.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public ToolResponse createTool(CreateToolRequest request) {
@@ -269,6 +280,18 @@ public class ToolService {
         response.setStatus(tool.getStatus());
         response.setCreatedAt(tool.getCreatedAt());
         response.setUpdatedAt(tool.getUpdatedAt());
+        
+        ReviewService reviewService = getReviewService();
+        if (reviewService != null) {
+            Double averageRating = reviewService.getAverageRating(tool.getId());
+            Long reviewCount = reviewService.getReviewCount(tool.getId());
+            response.setAverageRating(averageRating);
+            response.setReviewCount(reviewCount != null ? reviewCount.intValue() : 0);
+        } else {
+            response.setAverageRating(0.0);
+            response.setReviewCount(0);
+        }
+        
         return response;
     }
 }

@@ -13,6 +13,8 @@ public class ToolResponse {
     private Integer quantity;
     private String imageUrl;
     private ToolStatus status;
+    private Double averageRating;
+    private Integer reviewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -81,6 +83,22 @@ public class ToolResponse {
 
     public void setStatus(ToolStatus status) {
         this.status = status;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 
     public LocalDateTime getCreatedAt() {

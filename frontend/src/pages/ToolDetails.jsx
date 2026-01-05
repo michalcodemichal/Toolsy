@@ -4,10 +4,13 @@ import { toast } from 'react-toastify'
 import { useAuth } from '../context/AuthContext'
 import { getToolById } from '../services/toolService'
 import { createRental } from '../services/rentalService'
+import { getReviewsByTool, getMyReviewForTool } from '../services/reviewService'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import Loading from '../components/Loading'
+import ReviewList from '../components/ReviewList'
+import ReviewForm from '../components/ReviewForm'
 import './ToolDetails.css'
 
 const ToolDetails = () => {
@@ -18,6 +21,9 @@ const ToolDetails = () => {
   const [loading, setLoading] = useState(true)
   const [renting, setRenting] = useState(false)
   const [showRentalForm, setShowRentalForm] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [myReview, setMyReview] = useState(null)
+  const [loadingReviews, setLoadingReviews] = useState(true)
   const [rentalData, setRentalData] = useState({
     startDate: '',
     endDate: '',
@@ -42,6 +48,45 @@ const ToolDetails = () => {
 
     fetchTool()
   }, [id, navigate, rentalData.startDate, rentalData.endDate])
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoadingReviews(true)
+        const [reviewsData, myReviewData] = await Promise.all([
+          getReviewsByTool(id),
+          user ? getMyReviewForTool(id).catch(() => null) : Promise.resolve(null)
+        ])
+        setReviews(reviewsData)
+        setMyReview(myReviewData)
+      } catch (error) {
+        console.error('Błąd ładowania recenzji:', error)
+      } finally {
+        setLoadingReviews(false)
+      }
+    }
+
+    fetchReviews()
+  }, [id, user])
+
+  const handleReviewSubmitted = async () => {
+    const [reviewsData, myReviewData] = await Promise.all([
+      getReviewsByTool(id),
+      user ? getMyReviewForTool(id).catch(() => null) : Promise.resolve(null)
+    ])
+    setReviews(reviewsData)
+    setMyReview(myReviewData)
+    const updatedTool = await getToolById(id)
+    setTool(updatedTool)
+  }
+
+  const handleReviewDeleted = async () => {
+    const reviewsData = await getReviewsByTool(id)
+    setReviews(reviewsData)
+    setMyReview(null)
+    const updatedTool = await getToolById(id)
+    setTool(updatedTool)
+  }
 
   const handleRentalSubmit = async (e) => {
     e.preventDefault()
@@ -121,9 +166,20 @@ const ToolDetails = () => {
           <Card variant="gradient">
             <div className="mb-4">
               <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-3">{tool.name}</h1>
-              <span className="inline-block px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-bold">
-                {tool.category}
-              </span>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="inline-block px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full text-sm font-bold">
+                  {tool.category}
+                </span>
+                {tool.averageRating > 0 && (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-sm font-bold">
+                    <span>★</span>
+                    <span>{tool.averageRating.toFixed(1)}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      ({tool.reviewCount} {tool.reviewCount === 1 ? 'ocena' : 'ocen'})
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
             <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-6">{tool.description}</p>
             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -237,6 +293,41 @@ const ToolDetails = () => {
             </Card>
           )}
         </div>
+      </div>
+      
+      <div className="mt-8">
+        <Card variant="gradient">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+            Recenzje ({reviews.length})
+          </h2>
+          
+          {user && (
+            <div className="mb-6">
+              <ReviewForm
+                toolId={parseInt(id)}
+                existingReview={myReview}
+                onReviewSubmitted={handleReviewSubmitted}
+                onReviewDeleted={handleReviewDeleted}
+              />
+            </div>
+          )}
+          
+          {!user && (
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-gray-700 dark:text-gray-300">
+                Zaloguj się, aby dodać recenzję
+              </p>
+            </div>
+          )}
+          
+          {loadingReviews ? (
+            <div className="text-center py-8 text-gray-600 dark:text-gray-400">
+              Ładowanie recenzji...
+            </div>
+          ) : (
+            <ReviewList reviews={reviews} />
+          )}
+        </Card>
       </div>
     </div>
   )

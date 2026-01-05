@@ -2,6 +2,7 @@ package com.toolsy.config;
 
 import com.toolsy.model.*;
 import com.toolsy.repository.RentalRepository;
+import com.toolsy.repository.ReviewRepository;
 import com.toolsy.repository.ToolRepository;
 import com.toolsy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +14,24 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ToolRepository toolRepository;
     private final RentalRepository rentalRepository;
+    private final ReviewRepository reviewRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DataInitializer(UserRepository userRepository, ToolRepository toolRepository,
-                          RentalRepository rentalRepository, PasswordEncoder passwordEncoder) {
+                          RentalRepository rentalRepository, ReviewRepository reviewRepository,
+                          PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.toolRepository = toolRepository;
         this.rentalRepository = rentalRepository;
+        this.reviewRepository = reviewRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -46,6 +51,7 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Aktualizacja opisów istniejących narzędzi...");
             updateExistingTools();
             updateAdminUser();
+            initializeReviews();
             System.out.println("Aktualizacja zakończona");
         }
     }
@@ -147,6 +153,121 @@ public class DataInitializer implements CommandLineRunner {
             rental.setStatus(i % 2 == 0 ? RentalStatus.ACTIVE : RentalStatus.PENDING);
             rental.setNotes("Wypożyczenie testowe " + (i + 1));
             rentalRepository.save(rental);
+        }
+
+        initializeReviews(users, tools);
+    }
+
+    private void initializeReviews() {
+        List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == UserRole.USER)
+                .collect(Collectors.toList());
+        List<Tool> tools = toolRepository.findAll();
+        
+        if (users.isEmpty() || tools.isEmpty()) {
+            return;
+        }
+        
+        initializeReviews(users, tools);
+    }
+
+    private void initializeReviews(List<User> users, List<Tool> tools) {
+        if (users.isEmpty() || tools.isEmpty()) {
+            return;
+        }
+
+        String[] positiveComments = {
+            "Świetne narzędzie, bardzo polecam!",
+            "Działa bez zarzutu, szybka obsługa.",
+            "Narzędzie w dobrym stanie, wszystko działa.",
+            "Bardzo zadowolony z wypożyczenia.",
+            "Profesjonalne narzędzie, polecam wszystkim.",
+            "Dobra jakość, szybka dostawa.",
+            "Narzędzie jak nowe, bardzo polecam!",
+            "Wszystko w porządku, bez problemów.",
+            "Doskonałe narzędzie do moich potrzeb.",
+            "Bardzo dobra obsługa i narzędzie.",
+            "Narzędzie sprawdzone, działa perfekcyjnie.",
+            "Polecam, warto wypożyczyć.",
+            "Świetna jakość w rozsądnej cenie.",
+            "Bardzo zadowolony, na pewno jeszcze skorzystam.",
+            "Narzędzie w idealnym stanie technicznym.",
+            "Profesjonalna obsługa, polecam!",
+            "Wszystko działa jak należy.",
+            "Dobra jakość wykonania.",
+            "Narzędzie spełniło moje oczekiwania.",
+            "Bardzo polecam, warto skorzystać."
+        };
+
+        String[] mixedComments = {
+            "Narzędzie w porządku, ale mogłoby być lepiej.",
+            "Działa, ale czasem się zacina.",
+            "Średnia jakość, ale do podstawowych prac wystarczy.",
+            "OK, ale nie jest to najwyższa jakość.",
+            "Może być, ale są lepsze opcje.",
+            "Działa, ale wymaga trochę siły.",
+            "Przeciętne narzędzie, nic specjalnego.",
+            "OK do prostych prac, ale do profesjonalnych może nie wystarczyć.",
+            "Może być, ale spodziewałem się więcej.",
+            "Działa, ale nie jest to topowa jakość."
+        };
+
+        String[] negativeComments = {
+            "Narzędzie ma wady, często się psuje.",
+            "Nie polecam, jakość pozostawia wiele do życzenia.",
+            "Słaba jakość wykonania, szybko się zużywa.",
+            "Narzędzie w złym stanie, wymaga naprawy.",
+            "Rozczarowany, nie działa jak powinno.",
+            "Miałem problemy z tym narzędziem, nie polecam.",
+            "Niska jakość, szybko się zepsuło.",
+            "Narzędzie nie spełniło moich oczekiwań.",
+            "Słaba jakość, lepiej poszukać innej opcji.",
+            "Nie działało prawidłowo, musiałem zwrócić wcześniej."
+        };
+
+        int reviewCount = 0;
+        int toolIndex = 0;
+        
+        for (int i = 0; i < tools.size() * 2 && toolIndex < tools.size(); i++) {
+            Tool tool = tools.get(toolIndex);
+            User user = users.get(i % users.size());
+            
+            if (reviewRepository.existsByUserIdAndToolId(user.getId(), tool.getId())) {
+                toolIndex++;
+                continue;
+            }
+
+            Review review = new Review();
+            review.setUser(user);
+            review.setTool(tool);
+            
+            int rating;
+            String comment;
+            
+            int ratingType = i % 10;
+            if (ratingType < 5) {
+                rating = 4 + (i % 2);
+                comment = positiveComments[i % positiveComments.length];
+            } else if (ratingType < 8) {
+                rating = 3;
+                comment = mixedComments[i % mixedComments.length];
+            } else {
+                rating = 1 + (i % 2);
+                comment = negativeComments[i % negativeComments.length];
+            }
+            
+            review.setRating(rating);
+            review.setComment(comment);
+            reviewRepository.save(review);
+            reviewCount++;
+            
+            if (i % 3 == 2) {
+                toolIndex++;
+            }
+        }
+
+        if (reviewCount > 0) {
+            System.out.println("Dodano " + reviewCount + " przykładowych recenzji");
         }
     }
 
