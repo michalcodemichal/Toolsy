@@ -51,6 +51,34 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public User createUserFromGoogle(String email, String username, String firstName, String lastName, String googleId) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode("GOOGLE_OAUTH_USER_" + System.currentTimeMillis()));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhoneNumber("");
+        user.setGoogleId(googleId);
+        user.setRole(UserRole.USER);
+        user.setActive(true);
+
+        return userRepository.save(user);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));

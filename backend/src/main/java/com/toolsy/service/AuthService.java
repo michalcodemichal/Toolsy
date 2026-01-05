@@ -68,5 +68,46 @@ public class AuthService {
         response.setHashedPassword(hashedPassword);
         return response;
     }
+
+    public JwtResponse loginOrRegisterWithGoogle(String email, String fullName, String googleId) {
+        User user;
+        
+        try {
+            user = userService.findByEmail(email);
+            if (user.getGoogleId() == null) {
+                user.setGoogleId(googleId);
+                userService.saveUser(user);
+            }
+        } catch (RuntimeException e) {
+            String[] nameParts = fullName != null && !fullName.isEmpty() 
+                    ? fullName.split(" ", 2) 
+                    : new String[]{"User", "Google"};
+            
+            String firstName = nameParts.length > 0 ? nameParts[0] : "User";
+            String lastName = nameParts.length > 1 ? nameParts[1] : "Google";
+            
+            String username = email.split("@")[0];
+            int counter = 1;
+            while (userService.existsByUsername(username)) {
+                username = email.split("@")[0] + counter;
+                counter++;
+            }
+            
+            user = userService.createUserFromGoogle(email, username, firstName, lastName, googleId);
+        }
+
+        String token = jwtService.generateToken(user.getUsername(), user.getRole().name());
+        List<String> roles = Collections.singletonList(user.getRole().name());
+
+        return new JwtResponse(
+                token,
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                roles
+        );
+    }
 }
 

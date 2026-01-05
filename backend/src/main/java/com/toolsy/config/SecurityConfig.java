@@ -59,9 +59,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionFixation().migrateSession())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/login/oauth2/**").permitAll()
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
@@ -74,6 +78,34 @@ public class SecurityConfig {
                         .requestMatchers("/api/rentals/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization -> {
+                            System.out.println("=== OAuth2 Authorization Endpoint Configuration ===");
+                        })
+                        .redirectionEndpoint(redirection -> {
+                            System.out.println("=== OAuth2 Redirection Endpoint Configuration ===");
+                        })
+                        .successHandler((request, response, authentication) -> {
+                            System.out.println("=== OAuth2 Success Handler ===");
+                            System.out.println("Request URI: " + request.getRequestURI());
+                            System.out.println("Request Method: " + request.getMethod());
+                            System.out.println("Authentication: " + (authentication != null ? authentication.getName() : "null"));
+                            if (authentication != null && authentication.getPrincipal() != null) {
+                                System.out.println("Principal class: " + authentication.getPrincipal().getClass().getName());
+                            }
+                            response.sendRedirect("/api/auth/oauth2/success");
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            System.out.println("=== OAuth2 Failure Handler ===");
+                            System.out.println("Request URI: " + request.getRequestURI());
+                            System.out.println("Request Method: " + request.getMethod());
+                            System.out.println("Exception: " + exception.getMessage());
+                            exception.printStackTrace();
+                            response.sendRedirect("/api/auth/oauth2/failure");
+                        })
+                        .defaultSuccessUrl("/api/auth/oauth2/success", true)
+                        .failureUrl("/api/auth/oauth2/failure")
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .accessDeniedHandler((request, response, accessDeniedException) -> {

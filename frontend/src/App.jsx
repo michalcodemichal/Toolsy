@@ -13,6 +13,7 @@ import ToolList from './pages/ToolList'
 import ToolDetails from './pages/ToolDetails'
 import MyRentals from './pages/MyRentals'
 import AdminPanel from './pages/AdminPanel'
+import OAuthCallback from './pages/OAuthCallback'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/callback" element={<OAuthCallback />} />
               <Route path="/tools" element={<ToolList />} />
               <Route path="/tools/:id" element={<ToolDetails />} />
               <Route

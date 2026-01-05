@@ -21,18 +21,16 @@ const ToolList = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   
-  // Paginacja
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(12);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [allCategories, setAllCategories] = useState([]);
 
-  // Pobierz wszystkie kategorie przy pierwszym załadowaniu
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await getTools(0, 1000); // Pobierz dużo, żeby mieć wszystkie kategorie
+        const data = await getTools(0, 1000);
         const categories = data.content 
           ? [...new Set(data.content.map((tool) => tool.category))]
           : [...new Set(data.map((tool) => tool.category))];
@@ -50,12 +48,10 @@ const ToolList = () => {
       try {
         let response;
 
-        // Jeśli są daty, użyj specjalnego endpointu (bez paginacji, bo to już filtrowane)
         if (startDate && endDate) {
           const allTools = await getAvailableToolsForPeriod(startDate, endDate);
           const toolsArray = Array.isArray(allTools) ? allTools : allTools.content || [];
           
-          // Filtruj po stronie klienta dla dat
           let filtered = toolsArray;
           if (searchTerm) {
             filtered = filtered.filter(
@@ -68,7 +64,6 @@ const ToolList = () => {
             filtered = filtered.filter((tool) => tool.category === selectedCategory);
           }
 
-          // Sortowanie po stronie klienta
           if (sortBy) {
             filtered.sort((a, b) => {
               let result = 0;
@@ -89,7 +84,6 @@ const ToolList = () => {
             });
           }
 
-          // Paginacja po stronie klienta
           const startIndex = currentPage * pageSize;
           const endIndex = startIndex + pageSize;
           const paginatedTools = filtered.slice(startIndex, endIndex);
@@ -98,7 +92,6 @@ const ToolList = () => {
           setTotalPages(Math.ceil(filtered.length / pageSize));
           setTotalElements(filtered.length);
         } else {
-          // Użyj paginacji po stronie serwera
           if (searchTerm) {
             response = await searchTools(searchTerm, currentPage, pageSize, sortBy, sortOrder);
           } else if (selectedCategory) {
@@ -108,12 +101,10 @@ const ToolList = () => {
           }
 
           if (response.content) {
-            // Odpowiedź z paginacją
             setTools(response.content);
             setTotalPages(response.totalPages);
             setTotalElements(response.totalElements);
           } else {
-            // Fallback dla starych endpointów bez paginacji
             const toolsArray = Array.isArray(response) ? response : [];
             setTools(toolsArray);
             setTotalPages(1);

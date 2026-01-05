@@ -5,6 +5,7 @@ Aplikacja webowa do zarządzania wypożyczalnią narzędzi z pełnym systemem au
 ## Technologie
 
 ### Backend
+
 - **Java 17** - język programowania
 - **Spring Boot 3.2.0** - framework aplikacyjny
 - **Spring Security** - bezpieczeństwo i autoryzacja
@@ -14,6 +15,7 @@ Aplikacja webowa do zarządzania wypożyczalnią narzędzi z pełnym systemem au
 - **Maven** - zarządzanie zależnościami
 
 ### Frontend
+
 - **React 18** - biblioteka UI
 - **React Router** - routing
 - **Axios** - komunikacja z API
@@ -45,12 +47,14 @@ Aplikacja webowa do zarządzania wypożyczalnią narzędzi z pełnym systemem au
 ### Instalacja RabbitMQ
 
 **macOS:**
+
 ```bash
 brew install rabbitmq
 brew services start rabbitmq
 ```
 
 **Linux:**
+
 ```bash
 sudo apt-get install rabbitmq-server
 sudo systemctl start rabbitmq-server
@@ -66,11 +70,13 @@ Aplikacja będzie działać bez RabbitMQ, ale powiadomienia asynchroniczne nie b
 ### Backend
 
 1. Przejdź do katalogu backend:
+
 ```bash
 cd backend
 ```
 
 2. Zainstaluj zależności i uruchom aplikację:
+
 ```bash
 mvn clean install
 mvn spring-boot:run
@@ -83,16 +89,19 @@ Dokumentacja API (Swagger) dostępna pod adresem: `http://localhost:8080/swagger
 ### Frontend
 
 1. Przejdź do katalogu frontend:
+
 ```bash
 cd frontend
 ```
 
 2. Zainstaluj zależności:
+
 ```bash
 npm install
 ```
 
 3. Uruchom aplikację w trybie deweloperskim:
+
 ```bash
 npm run dev
 ```
@@ -103,11 +112,13 @@ Frontend będzie dostępny pod adresem: `http://localhost:3000`
 
 Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 
-- **Admin**: 
+- **Admin**:
+
   - Username: `admin`
   - Password: `admin123`
 
-- **Użytkownicy**: 
+- **Użytkownicy**:
+
   - Username: `user1` do `user10`
   - Password: `user123`
 
@@ -117,10 +128,12 @@ Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 ## API Endpoints
 
 ### Autoryzacja
+
 - `POST /api/auth/login` - Logowanie
 - `POST /api/auth/register` - Rejestracja
 
 ### Narzędzia
+
 - `GET /api/tools` - Lista wszystkich narzędzi
 - `GET /api/tools/available` - Lista dostępnych narzędzi
 - `GET /api/tools/{id}` - Szczegóły narzędzia
@@ -131,6 +144,7 @@ Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 - `DELETE /api/tools/{id}` - Usunięcie narzędzia (ADMIN)
 
 ### Wypożyczenia
+
 - `POST /api/rentals` - Utworzenie wypożyczenia
 - `GET /api/rentals/my` - Moje wypożyczenia
 - `GET /api/rentals/{id}` - Szczegóły wypożyczenia
@@ -140,6 +154,7 @@ Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 - `PUT /api/rentals/{id}/cancel` - Anulowanie wypożyczenia
 
 ### Użytkownicy
+
 - `GET /api/users/me` - Aktualny użytkownik
 - `GET /api/users` - Lista użytkowników (ADMIN)
 - `GET /api/users/{id}` - Szczegóły użytkownika (ADMIN)
@@ -147,9 +162,11 @@ Aplikacja automatycznie inicjalizuje dane testowe przy pierwszym uruchomieniu:
 - `PUT /api/users/{id}/deactivate` - Dezaktywacja użytkownika (ADMIN)
 
 ### Pliki
+
 - `POST /api/files/upload` - Upload zdjęcia (ADMIN)
 
 ### Statystyki
+
 - `GET /api/statistics` - Statystyki systemu (ADMIN)
 
 ## Struktura projektu
@@ -207,6 +224,7 @@ Aplikacja używa H2 Database (in-memory) z automatyczną inicjalizacją danych. 
 ## Asynchroniczność / Kolejki
 
 Aplikacja wykorzystuje RabbitMQ do asynchronicznego przetwarzania powiadomień o wypożyczeniach. System wysyła wiadomości do kolejki przy:
+
 - Utworzeniu wypożyczenia
 - Zatwierdzeniu wypożyczenia
 - Zakończeniu wypożyczenia
@@ -230,7 +248,7 @@ erDiagram
         timestamp created_at "not null"
         timestamp updated_at "not null"
     }
-    
+
     TOOLS {
         bigint id PK
         varchar name "not null"
@@ -243,7 +261,7 @@ erDiagram
         timestamp created_at "not null"
         timestamp updated_at "not null"
     }
-    
+
     RENTALS {
         bigint id PK
         bigint user_id FK "not null"
@@ -258,12 +276,13 @@ erDiagram
         timestamp updated_at "not null"
         timestamp returned_at
     }
-    
+
     USERS ||--o{ RENTALS : "ma"
     TOOLS ||--o{ RENTALS : "jest wypożyczane"
 ```
 
 **Relacje:**
+
 - User (1) ──< Rental (Many) - Jeden użytkownik może mieć wiele wypożyczeń
 - Tool (1) ──< Rental (Many) - Jedno narzędzie może być wypożyczone wiele razy
 

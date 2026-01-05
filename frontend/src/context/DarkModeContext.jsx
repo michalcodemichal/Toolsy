@@ -12,23 +12,19 @@ export const useDarkMode = () => {
 
 export const DarkModeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
-    // Sprawdź localStorage lub preferencje systemowe
     const saved = localStorage.getItem('darkMode')
     if (saved !== null) {
       return saved === 'true'
     }
-    // Sprawdź preferencje systemowe
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
 
   useEffect(() => {
-    // Zastosuj klasę dark do elementu html
     if (isDark) {
       document.documentElement.classList.add('dark')
     } else {
       document.documentElement.classList.remove('dark')
     }
-    // Zapisz preferencje
     localStorage.setItem('darkMode', isDark.toString())
   }, [isDark])
 

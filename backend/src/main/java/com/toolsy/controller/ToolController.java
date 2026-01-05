@@ -75,12 +75,10 @@ public class ToolController {
             } catch (Exception e) {
                 System.err.println("Error parsing dates: " + e.getMessage());
                 e.printStackTrace();
-                // Jeśli błąd parsowania dat, zwróć wszystkie dostępne narzędzia
                 List<ToolResponse> tools = toolService.getAvailableTools();
                 return ResponseEntity.ok(tools);
             }
         }
-        // Jeśli brak dat, zwróć wszystkie dostępne narzędzia
         System.out.println("No dates provided, returning all available tools");
         List<ToolResponse> tools = toolService.getAvailableTools();
         return ResponseEntity.ok(tools);

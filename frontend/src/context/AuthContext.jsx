@@ -79,13 +79,20 @@ export const AuthProvider = ({ children }) => {
     return user?.roles?.includes('ADMIN')
   }
 
+  const setAuth = (authData) => {
+    if (authData.user) {
+      setUser(authData.user)
+    }
+  }
+
   const value = {
     user,
     login,
     register,
     logout,
     isAdmin,
-    loading
+    loading,
+    setAuth
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

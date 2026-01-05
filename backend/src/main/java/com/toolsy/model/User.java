@@ -40,9 +40,8 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @NotBlank
     @Size(max = 20)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -51,6 +50,9 @@ public class User {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @Column(unique = true, nullable = true)
+    private String googleId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -166,6 +168,14 @@ public class User {
 
     public void setRentals(Set<Rental> rentals) {
         this.rentals = rentals;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 }
 
