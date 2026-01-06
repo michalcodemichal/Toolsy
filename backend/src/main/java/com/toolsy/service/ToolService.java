@@ -10,6 +10,7 @@ import com.toolsy.model.RentalStatus;
 import com.toolsy.repository.ToolRepository;
 import com.toolsy.repository.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +27,13 @@ import java.util.stream.Collectors;
 public class ToolService {
     private final ToolRepository toolRepository;
     private final RentalRepository rentalRepository;
+    private final ReviewService reviewService;
 
     @Autowired
-    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository) {
+    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository, @Lazy ReviewService reviewService) {
         this.toolRepository = toolRepository;
         this.rentalRepository = rentalRepository;
+        this.reviewService = reviewService;
     }
 
     public ToolResponse createTool(CreateToolRequest request) {
@@ -257,6 +260,11 @@ public class ToolService {
         return toolRepository.save(tool);
     }
 
+    public void updateToolRating(Long toolId) {
+        // This method is called by ReviewService to update tool ratings
+        // Implementation can be added if needed for caching or other optimizations
+    }
+
     private ToolResponse mapToResponse(Tool tool) {
         ToolResponse response = new ToolResponse();
         response.setId(tool.getId());
@@ -269,6 +277,16 @@ public class ToolService {
         response.setStatus(tool.getStatus());
         response.setCreatedAt(tool.getCreatedAt());
         response.setUpdatedAt(tool.getUpdatedAt());
+        
+        // Add review statistics if ReviewService is available
+        if (reviewService != null) {
+            response.setAverageRating(reviewService.getAverageRating(tool.getId()));
+            response.setReviewCount(reviewService.getReviewCount(tool.getId()));
+        } else {
+            response.setAverageRating(java.math.BigDecimal.ZERO);
+            response.setReviewCount(0L);
+        }
+        
         return response;
     }
 }

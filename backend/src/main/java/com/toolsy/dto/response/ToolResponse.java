@@ -15,6 +15,8 @@ public class ToolResponse {
     private ToolStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private BigDecimal averageRating;
+    private Long reviewCount;
 
     public ToolResponse() {
     }
@@ -97,6 +99,22 @@ public class ToolResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public BigDecimal getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(BigDecimal averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Long getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Long reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
 

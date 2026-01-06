@@ -4,10 +4,13 @@ import { toast } from 'react-toastify'
 import { useAuth } from '../context/AuthContext'
 import { getToolById } from '../services/toolService'
 import { createRental } from '../services/rentalService'
+import { getReviewsByToolId } from '../services/reviewService'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import Loading from '../components/Loading'
+import ReviewList from '../components/ReviewList'
+import ReviewForm from '../components/ReviewForm'
 import './ToolDetails.css'
 
 const ToolDetails = () => {
@@ -18,6 +21,9 @@ const ToolDetails = () => {
   const [loading, setLoading] = useState(true)
   const [renting, setRenting] = useState(false)
   const [showRentalForm, setShowRentalForm] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [loadingReviews, setLoadingReviews] = useState(true)
+  const [userReview, setUserReview] = useState(null)
   const [rentalData, setRentalData] = useState({
     startDate: '',
     endDate: '',
@@ -42,6 +48,56 @@ const ToolDetails = () => {
 
     fetchTool()
   }, [id, navigate, rentalData.startDate, rentalData.endDate])
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoadingReviews(true)
+        const reviewsData = await getReviewsByToolId(id)
+        setReviews(reviewsData)
+        
+        // Find user's review if logged in
+        if (user) {
+          const review = reviewsData.find(r => r.userId === user.id)
+          setUserReview(review || null)
+        } else {
+          setUserReview(null)
+        }
+      } catch (error) {
+        console.error('Błąd ładowania recenzji:', error)
+      } finally {
+        setLoadingReviews(false)
+      }
+    }
+
+    if (id) {
+      fetchReviews()
+    }
+  }, [id, user])
+
+  const handleReviewSubmitted = async () => {
+    // Reload reviews and tool
+    try {
+      const reviewsData = await getReviewsByToolId(id)
+      setReviews(reviewsData)
+      
+      if (user) {
+        const review = reviewsData.find(r => r.userId === user.id)
+        setUserReview(review || null)
+      }
+
+      // Reload tool to get updated rating
+      const toolData = await getToolById(id)
+      setTool(toolData)
+    } catch (error) {
+      console.error('Błąd odświeżania recenzji:', error)
+    }
+  }
+
+  const handleReviewDeleted = async () => {
+    setUserReview(null)
+    await handleReviewSubmitted()
+  }
 
   const handleRentalSubmit = async (e) => {
     e.preventDefault()
@@ -140,6 +196,28 @@ const ToolDetails = () => {
                 </p>
               </div>
             </div>
+            {(tool.averageRating || tool.reviewCount > 0) && (
+              <div className="mb-6 p-4 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border-2 border-yellow-200 dark:border-yellow-800">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Średnia ocena</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                        {tool.averageRating ? tool.averageRating.toFixed(1) : '0.0'}
+                      </span>
+                      <span className="text-xl">⭐</span>
+                    </div>
+                  </div>
+                  <div className="h-12 w-px bg-yellow-300 dark:bg-yellow-700"></div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Liczba recenzji</p>
+                    <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                      {tool.reviewCount || 0}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-3">
               <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-md ${
                 tool.status === 'AVAILABLE' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
@@ -237,6 +315,32 @@ const ToolDetails = () => {
             </Card>
           )}
         </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-12">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+          ⭐ Recenzje ({reviews.length})
+        </h2>
+        
+        {user && (
+          <div className="mb-8">
+            <ReviewForm
+              toolId={id}
+              existingReview={userReview}
+              onReviewSubmitted={handleReviewSubmitted}
+              onReviewDeleted={handleReviewDeleted}
+            />
+          </div>
+        )}
+
+        {loadingReviews ? (
+          <Card className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </Card>
+        ) : (
+          <ReviewList reviews={reviews} />
+        )}
       </div>
     </div>
   )
