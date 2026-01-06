@@ -75,7 +75,41 @@ Aplikacja będzie działać bez RabbitMQ, ale powiadomienia asynchroniczne nie b
 cd backend
 ```
 
-2. Zainstaluj zależności i uruchom aplikację:
+2. **Skonfiguruj zmienne środowiskowe dla Google OAuth2** (opcjonalne, ale wymagane dla logowania przez Google):
+
+**Linux/macOS:**
+
+```bash
+export GOOGLE_CLIENT_ID="twoj-client-id-tutaj"
+export GOOGLE_CLIENT_SECRET="twoj-client-secret-tutaj"
+```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:GOOGLE_CLIENT_ID="twoj-client-id-tutaj"
+$env:GOOGLE_CLIENT_SECRET="twoj-client-secret-tutaj"
+```
+
+**Windows (CMD):**
+
+```cmd
+set GOOGLE_CLIENT_ID=twoj-client-id-tutaj
+set GOOGLE_CLIENT_SECRET=twoj-client-secret-tutaj
+```
+
+**Jak uzyskać klucze Google OAuth2:**
+
+1. Przejdź do [Google Cloud Console](https://console.cloud.google.com/)
+2. Utwórz nowy projekt lub wybierz istniejący
+3. Włącz Google+ API lub Google Identity API
+4. Przejdź do "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
+5. Skonfiguruj redirect URI: `http://localhost:8080/login/oauth2/code/google`
+6. Skopiuj Client ID i Client Secret i ustaw jako zmienne środowiskowe
+
+**Uwaga:** Jeśli nie skonfigurujesz zmiennych środowiskowych, logowanie przez Google nie będzie działać, ale pozostałe funkcjonalności będą działać normalnie.
+
+3. Zainstaluj zależności i uruchom aplikację:
 
 ```bash
 mvn clean install
