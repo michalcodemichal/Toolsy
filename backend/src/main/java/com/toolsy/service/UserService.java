@@ -67,7 +67,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode("GOOGLE_OAUTH_USER_" + System.currentTimeMillis()));
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        user.setPhoneNumber("");
+        user.setPhoneNumber(""); // Empty string for OAuth users since phone number is not provided
         user.setGoogleId(googleId);
         user.setRole(UserRole.USER);
         user.setActive(true);
