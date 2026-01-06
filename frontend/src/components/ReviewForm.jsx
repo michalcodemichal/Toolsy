@@ -94,11 +94,9 @@ const ReviewForm = ({ toolId, existingReview, onReviewSubmitted, onReviewDeleted
             key={star}
             type="button"
             onClick={() => setRating(star)}
-            className={`text-3xl transition-transform hover:scale-110 ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'
-            }`}
+            className="text-3xl transition-transform hover:scale-110 cursor-pointer focus:outline-none"
           >
-            ⭐
+            {star <= rating ? '⭐' : '☆'}
           </button>
         ))}
       </div>
