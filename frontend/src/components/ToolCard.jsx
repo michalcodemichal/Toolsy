@@ -43,24 +43,6 @@ const ToolCard = ({ tool }) => {
         <div className="p-6 flex flex-col flex-1 min-h-[200px] bg-white dark:bg-slate-800">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{tool.name}</h3>
           <p className="text-sm text-indigo-600 dark:text-indigo-400 font-semibold mb-3 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full inline-block w-fit">{tool.category}</p>
-          {(tool.averageRating || tool.reviewCount > 0) && (
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1">
-                <span className="text-yellow-500 text-lg">⭐</span>
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {tool.averageRating ? tool.averageRating.toFixed(1) : '0.0'}
-                </span>
-              </div>
-              {tool.reviewCount > 0 && (
-                <>
-                  <span className="text-gray-400 dark:text-gray-600">•</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {tool.reviewCount} {tool.reviewCount === 1 ? 'recenzja' : tool.reviewCount < 5 ? 'recenzje' : 'recenzji'}
-                  </span>
-                </>
-              )}
-            </div>
-          )}
           <p className="text-gray-600 dark:text-gray-300 mb-4 flex-1 line-clamp-3 leading-relaxed">{tool.description}</p>
           <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
             <div>

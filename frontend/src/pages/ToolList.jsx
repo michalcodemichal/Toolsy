@@ -272,23 +272,26 @@ const ToolList = () => {
                 <option value="desc">⬇️ Malejąco</option>
               </select>
             )}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                Ilość narzędzi na stronę:
+            <div className="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-1 border-2 border-gray-200 dark:border-gray-700 shadow-sm">
+              <span className="px-3 text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                📊 Na stronę:
               </span>
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(0);
-                }}
-                className="px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-slate-800 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 cursor-pointer"
-              >
-                <option value={6}>6</option>
-                <option value={12}>12</option>
-                <option value={24}>24</option>
-                <option value={48}>48</option>
-              </select>
+              {[6, 12, 24, 48].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => {
+                    setPageSize(size);
+                    setCurrentPage(0);
+                  }}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                    pageSize === size
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white shadow-md scale-105'
+                      : 'bg-transparent hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
             </div>
           </div>
           {totalElements > 0 && (

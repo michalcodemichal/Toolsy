@@ -2,6 +2,10 @@ package com.toolsy.controller;
 
 import com.toolsy.dto.response.JwtResponse;
 import com.toolsy.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth/oauth2")
+@Tag(name = "OAuth2", description = "API do autoryzacji OAuth2")
 public class OAuth2Controller {
     private final AuthService authService;
 
@@ -24,6 +29,10 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/success")
+    @Operation(summary = "Callback OAuth2 - sukces", description = "Endpoint callback dla pomyślnego logowania OAuth2")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "302", description = "Przekierowanie do frontendu z tokenem")
+    })
     public void oauth2Success(
             @AuthenticationPrincipal OAuth2User oauth2User,
             HttpServletRequest request,
@@ -97,6 +106,10 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/failure")
+    @Operation(summary = "Callback OAuth2 - błąd", description = "Endpoint callback dla nieudanego logowania OAuth2")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "302", description = "Przekierowanie do frontendu z błędem")
+    })
     public void oauth2Failure(HttpServletResponse response) throws IOException {
         response.sendRedirect("http://localhost:3000/login?error=oauth_failed");
     }

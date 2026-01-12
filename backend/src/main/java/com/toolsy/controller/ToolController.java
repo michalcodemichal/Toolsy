@@ -4,6 +4,14 @@ import com.toolsy.dto.request.CreateToolRequest;
 import com.toolsy.dto.response.PagedResponse;
 import com.toolsy.dto.response.ToolResponse;
 import com.toolsy.service.ToolService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +24,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/tools")
+@Tag(name = "Narzędzia", description = "API do zarządzania narzędziami")
 public class ToolController {
     private final ToolService toolService;
 
@@ -25,11 +34,15 @@ public class ToolController {
     }
 
     @GetMapping
+    @Operation(summary = "Pobierz wszystkie narzędzia", description = "Zwraca listę wszystkich narzędzi z opcjonalną paginacją i sortowaniem")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista narzędzi", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<?> getAllTools(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+            @Parameter(description = "Numer strony (dla paginacji)") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Rozmiar strony (dla paginacji)") @RequestParam(required = false) Integer size,
+            @Parameter(description = "Pole do sortowania") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Kierunek sortowania (asc/desc)") @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         
         if (page != null && size != null) {
             PagedResponse<ToolResponse> pagedResponse = toolService.getAllToolsPaginated(page, size, sortBy, sortOrder);
@@ -41,11 +54,15 @@ public class ToolController {
     }
 
     @GetMapping("/available")
+    @Operation(summary = "Pobierz dostępne narzędzia", description = "Zwraca listę narzędzi dostępnych do wypożyczenia")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista dostępnych narzędzi", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<?> getAvailableTools(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+            @Parameter(description = "Numer strony (dla paginacji)") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Rozmiar strony (dla paginacji)") @RequestParam(required = false) Integer size,
+            @Parameter(description = "Pole do sortowania") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Kierunek sortowania (asc/desc)") @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         
         if (page != null && size != null) {
             PagedResponse<ToolResponse> pagedResponse = toolService.getAvailableToolsPaginated(page, size, sortBy, sortOrder);
@@ -57,9 +74,13 @@ public class ToolController {
     }
 
     @GetMapping("/available-for-period")
+    @Operation(summary = "Pobierz dostępne narzędzia w okresie", description = "Zwraca narzędzia dostępne w określonym przedziale dat")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista dostępnych narzędzi", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<List<ToolResponse>> getAvailableToolsForPeriod(
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
+            @Parameter(description = "Data rozpoczęcia (format: YYYY-MM-DD)") @RequestParam(required = false) String startDate,
+            @Parameter(description = "Data zakończenia (format: YYYY-MM-DD)") @RequestParam(required = false) String endDate) {
         System.out.println("=== getAvailableToolsForPeriod called ===");
         System.out.println("startDate: " + startDate);
         System.out.println("endDate: " + endDate);
@@ -85,12 +106,16 @@ public class ToolController {
     }
 
     @GetMapping("/category/{category}")
+    @Operation(summary = "Pobierz narzędzia po kategorii", description = "Zwraca narzędzia z określonej kategorii")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista narzędzi w kategorii", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<?> getToolsByCategory(
-            @PathVariable String category,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+            @Parameter(description = "Kategoria narzędzi") @PathVariable String category,
+            @Parameter(description = "Numer strony (dla paginacji)") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Rozmiar strony (dla paginacji)") @RequestParam(required = false) Integer size,
+            @Parameter(description = "Pole do sortowania") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Kierunek sortowania (asc/desc)") @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         
         if (page != null && size != null) {
             PagedResponse<ToolResponse> pagedResponse = toolService.getToolsByCategoryPaginated(category, page, size, sortBy, sortOrder);
@@ -102,12 +127,16 @@ public class ToolController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Wyszukaj narzędzia", description = "Wyszukuje narzędzia po nazwie lub opisie")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista znalezionych narzędzi", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<?> searchTools(
-            @RequestParam String q,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+            @Parameter(description = "Zapytanie wyszukiwania", required = true) @RequestParam String q,
+            @Parameter(description = "Numer strony (dla paginacji)") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Rozmiar strony (dla paginacji)") @RequestParam(required = false) Integer size,
+            @Parameter(description = "Pole do sortowania") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Kierunek sortowania (asc/desc)") @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         
         if (page != null && size != null) {
             PagedResponse<ToolResponse> pagedResponse = toolService.searchToolsPaginated(q, page, size, sortBy, sortOrder);
@@ -119,18 +148,27 @@ public class ToolController {
     }
 
     @GetMapping("/sorted")
+    @Operation(summary = "Pobierz posortowane narzędzia", description = "Zwraca wszystkie narzędzia posortowane według określonego kryterium")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista posortowanych narzędzi", content = @Content(schema = @Schema(implementation = ToolResponse.class)))
+    })
     public ResponseEntity<List<ToolResponse>> getToolsSorted(
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+            @Parameter(description = "Pole do sortowania") @RequestParam(required = false) String sortBy,
+            @Parameter(description = "Kierunek sortowania (asc/desc)") @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
         List<ToolResponse> tools = toolService.getToolsSorted(sortBy, sortOrder);
         return ResponseEntity.ok(tools);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Pobierz szczegóły narzędzia", description = "Zwraca szczegóły narzędzia o podanym ID z opcjonalną informacją o dostępności w okresie")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Szczegóły narzędzia", content = @Content(schema = @Schema(implementation = ToolResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Narzędzie nie znalezione")
+    })
     public ResponseEntity<ToolResponse> getToolById(
-            @PathVariable Long id,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
+            @Parameter(description = "ID narzędzia", required = true) @PathVariable Long id,
+            @Parameter(description = "Data rozpoczęcia (format: YYYY-MM-DD)") @RequestParam(required = false) String startDate,
+            @Parameter(description = "Data zakończenia (format: YYYY-MM-DD)") @RequestParam(required = false) String endDate) {
         if (startDate != null && endDate != null) {
             try {
                 java.time.LocalDate start = java.time.LocalDate.parse(startDate);
@@ -148,6 +186,13 @@ public class ToolController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Utwórz nowe narzędzie", description = "Tworzy nowe narzędzie w systemie (wymaga uprawnień ADMIN)", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Narzędzie utworzone pomyślnie", content = @Content(schema = @Schema(implementation = ToolResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Nieprawidłowe dane wejściowe"),
+        @ApiResponse(responseCode = "401", description = "Brak autoryzacji"),
+        @ApiResponse(responseCode = "403", description = "Brak uprawnień")
+    })
     public ResponseEntity<ToolResponse> createTool(@Valid @RequestBody CreateToolRequest request) {
         ToolResponse tool = toolService.createTool(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(tool);
@@ -155,14 +200,29 @@ public class ToolController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ToolResponse> updateTool(@PathVariable Long id, @Valid @RequestBody CreateToolRequest request) {
+    @Operation(summary = "Aktualizuj narzędzie", description = "Aktualizuje istniejące narzędzie (wymaga uprawnień ADMIN)", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Narzędzie zaktualizowane pomyślnie", content = @Content(schema = @Schema(implementation = ToolResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Nieprawidłowe dane wejściowe"),
+        @ApiResponse(responseCode = "404", description = "Narzędzie nie znalezione"),
+        @ApiResponse(responseCode = "401", description = "Brak autoryzacji"),
+        @ApiResponse(responseCode = "403", description = "Brak uprawnień")
+    })
+    public ResponseEntity<ToolResponse> updateTool(@Parameter(description = "ID narzędzia", required = true) @PathVariable Long id, @Valid @RequestBody CreateToolRequest request) {
         ToolResponse tool = toolService.updateTool(id, request);
         return ResponseEntity.ok(tool);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteTool(@PathVariable Long id) {
+    @Operation(summary = "Usuń narzędzie", description = "Usuwa narzędzie z systemu (wymaga uprawnień ADMIN)", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Narzędzie usunięte pomyślnie"),
+        @ApiResponse(responseCode = "404", description = "Narzędzie nie znalezione"),
+        @ApiResponse(responseCode = "401", description = "Brak autoryzacji"),
+        @ApiResponse(responseCode = "403", description = "Brak uprawnień")
+    })
+    public ResponseEntity<Void> deleteTool(@Parameter(description = "ID narzędzia", required = true) @PathVariable Long id) {
         toolService.deleteTool(id);
         return ResponseEntity.noContent().build();
     }

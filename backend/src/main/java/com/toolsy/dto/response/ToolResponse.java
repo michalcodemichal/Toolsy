@@ -1,22 +1,32 @@
 package com.toolsy.dto.response;
 
 import com.toolsy.model.ToolStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Schema(description = "Odpowiedź zawierająca informacje o narzędziu")
 public class ToolResponse {
+    @Schema(description = "ID narzędzia", example = "1")
     private Long id;
+    @Schema(description = "Nazwa narzędzia", example = "Wiertarka udarowa")
     private String name;
+    @Schema(description = "Opis narzędzia", example = "Profesjonalna wiertarka udarowa z funkcją młotkowania")
     private String description;
+    @Schema(description = "Kategoria narzędzia", example = "Elektryczne")
     private String category;
+    @Schema(description = "Cena dzienna wypożyczenia", example = "25.50")
     private BigDecimal dailyPrice;
+    @Schema(description = "Ilość dostępnych sztuk", example = "5")
     private Integer quantity;
+    @Schema(description = "URL zdjęcia narzędzia", example = "/uploads/tool.jpg")
     private String imageUrl;
+    @Schema(description = "Status narzędzia", example = "AVAILABLE")
     private ToolStatus status;
+    @Schema(description = "Data utworzenia")
     private LocalDateTime createdAt;
+    @Schema(description = "Data ostatniej aktualizacji")
     private LocalDateTime updatedAt;
-    private BigDecimal averageRating;
-    private Long reviewCount;
 
     public ToolResponse() {
     }
@@ -99,22 +109,6 @@ public class ToolResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public BigDecimal getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public Long getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(Long reviewCount) {
-        this.reviewCount = reviewCount;
     }
 }
 

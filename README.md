@@ -75,41 +75,7 @@ Aplikacja będzie działać bez RabbitMQ, ale powiadomienia asynchroniczne nie b
 cd backend
 ```
 
-2. **Skonfiguruj zmienne środowiskowe dla Google OAuth2** (opcjonalne, ale wymagane dla logowania przez Google):
-
-**Linux/macOS:**
-
-```bash
-export GOOGLE_CLIENT_ID="twoj-client-id-tutaj"
-export GOOGLE_CLIENT_SECRET="twoj-client-secret-tutaj"
-```
-
-**Windows (PowerShell):**
-
-```powershell
-$env:GOOGLE_CLIENT_ID="twoj-client-id-tutaj"
-$env:GOOGLE_CLIENT_SECRET="twoj-client-secret-tutaj"
-```
-
-**Windows (CMD):**
-
-```cmd
-set GOOGLE_CLIENT_ID=twoj-client-id-tutaj
-set GOOGLE_CLIENT_SECRET=twoj-client-secret-tutaj
-```
-
-**Jak uzyskać klucze Google OAuth2:**
-
-1. Przejdź do [Google Cloud Console](https://console.cloud.google.com/)
-2. Utwórz nowy projekt lub wybierz istniejący
-3. Włącz Google+ API lub Google Identity API
-4. Przejdź do "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
-5. Skonfiguruj redirect URI: `http://localhost:8080/login/oauth2/code/google`
-6. Skopiuj Client ID i Client Secret i ustaw jako zmienne środowiskowe
-
-**Uwaga:** Jeśli nie skonfigurujesz zmiennych środowiskowych, logowanie przez Google nie będzie działać, ale pozostałe funkcjonalności będą działać normalnie.
-
-3. Zainstaluj zależności i uruchom aplikację:
+2. Zainstaluj zależności i uruchom aplikację:
 
 ```bash
 mvn clean install
@@ -255,16 +221,6 @@ Aplikacja wykorzystuje architekturę warstwową:
 
 Aplikacja używa H2 Database (in-memory) z automatyczną inicjalizacją danych. W pliku `application.properties` można zmienić konfigurację na PostgreSQL dla produkcji.
 
-**Struktura bazy danych:**
-
-- **USERS** - użytkownicy systemu (admin + 10 użytkowników testowych)
-- **TOOLS** - katalog narzędzi (30 narzędzi testowych)
-- **RENTALS** - wypożyczenia narzędzi (10 wypożyczeń testowych)
-- **CATEGORIES** - kategorie narzędzi (5 kategorii: Elektryczne, Pneumatyczne, Ręczne, Akumulatorowe, Stacjonarne)
-- **NOTIFICATIONS** - powiadomienia dla użytkowników (generowane asynchronicznie przez RabbitMQ)
-
-Baza danych jest znormalizowana do 3NF (trzeciej postaci normalnej), co zapewnia brak redundancji danych i spójność.
-
 ## Asynchroniczność / Kolejki
 
 Aplikacja wykorzystuje RabbitMQ do asynchronicznego przetwarzania powiadomień o wypożyczeniach. System wysyła wiadomości do kolejki przy:
@@ -289,7 +245,6 @@ erDiagram
         varchar phone_number
         varchar role "not null, default: USER"
         boolean active "not null, default: true"
-        varchar google_id UK
         timestamp created_at "not null"
         timestamp updated_at "not null"
     }
@@ -298,19 +253,11 @@ erDiagram
         bigint id PK
         varchar name "not null"
         varchar description "not null"
-        bigint category_id FK "not null"
+        varchar category "not null"
         decimal daily_price "not null"
         integer quantity "not null"
         varchar image_url
         varchar status "not null, default: AVAILABLE"
-        timestamp created_at "not null"
-        timestamp updated_at "not null"
-    }
-
-    CATEGORIES {
-        bigint id PK
-        varchar name UK "unique, not null"
-        varchar description
         timestamp created_at "not null"
         timestamp updated_at "not null"
     }
@@ -330,30 +277,14 @@ erDiagram
         timestamp returned_at
     }
 
-    NOTIFICATIONS {
-        bigint id PK
-        bigint user_id FK "not null"
-        bigint rental_id FK
-        varchar type "not null"
-        varchar message "not null"
-        boolean read "not null, default: false"
-        timestamp created_at "not null"
-    }
-
     USERS ||--o{ RENTALS : "ma"
     TOOLS ||--o{ RENTALS : "jest wypożyczane"
-    CATEGORIES ||--o{ TOOLS : "zawiera"
-    USERS ||--o{ NOTIFICATIONS : "otrzymuje"
-    RENTALS ||--o{ NOTIFICATIONS : "generuje"
 ```
 
 **Relacje:**
 
 - User (1) ──< Rental (Many) - Jeden użytkownik może mieć wiele wypożyczeń
 - Tool (1) ──< Rental (Many) - Jedno narzędzie może być wypożyczone wiele razy
-- Category (1) ──< Tool (Many) - Jedna kategoria może zawierać wiele narzędzi
-- User (1) ──< Notification (Many) - Jeden użytkownik może otrzymać wiele powiadomień
-- Rental (1) ──< Notification (Many) - Jedno wypożyczenie może generować wiele powiadomień
 
 ## Licencja
 

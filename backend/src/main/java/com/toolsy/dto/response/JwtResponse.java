@@ -1,16 +1,27 @@
 package com.toolsy.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Schema(description = "Odpowiedź zawierająca token JWT i informacje o użytkowniku")
 public class JwtResponse {
+    @Schema(description = "Token JWT", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     private String token;
+    @Schema(description = "Typ tokenu", example = "Bearer")
     private String type = "Bearer";
+    @Schema(description = "ID użytkownika", example = "1")
     private Long id;
+    @Schema(description = "Nazwa użytkownika", example = "user1")
     private String username;
+    @Schema(description = "Email użytkownika", example = "user1@example.com")
     private String email;
+    @Schema(description = "Imię użytkownika", example = "Jan")
     private String firstName;
+    @Schema(description = "Nazwisko użytkownika", example = "Kowalski")
     private String lastName;
+    @Schema(description = "Lista ról użytkownika", example = "[\"USER\"]")
     private List<String> roles;
+    @Schema(description = "Zahashowane hasło (tylko do użytku wewnętrznego)", hidden = true)
     private String hashedPassword;
 
     public JwtResponse(String token, Long id, String username, String email, String firstName, String lastName, List<String> roles) {

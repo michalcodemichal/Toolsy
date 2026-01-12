@@ -1,6 +1,11 @@
 package com.toolsy.controller;
 
 import com.toolsy.repository.ToolRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +16,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/health")
+@Tag(name = "Health", description = "API do sprawdzania stanu aplikacji")
 public class HealthController {
     private final ToolRepository toolRepository;
 
@@ -20,6 +26,8 @@ public class HealthController {
     }
 
     @GetMapping
+    @Operation(summary = "Sprawdź stan aplikacji", description = "Zwraca informacje o stanie aplikacji")
+    @ApiResponse(responseCode = "200", description = "Aplikacja działa poprawnie")
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");

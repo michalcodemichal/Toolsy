@@ -1,13 +1,21 @@
 package com.toolsy.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
+@Schema(description = "Odpowiedź zawierająca statystyki systemu")
 public class StatisticsResponse {
+    @Schema(description = "Całkowita liczba narzędzi", example = "30")
     private Long totalTools;
+    @Schema(description = "Całkowita liczba użytkowników", example = "50")
     private Long totalUsers;
+    @Schema(description = "Całkowita liczba wypożyczeń", example = "150")
     private Long totalRentals;
+    @Schema(description = "Liczba aktywnych wypożyczeń", example = "10")
     private Long activeRentals;
+    @Schema(description = "Całkowity przychód", example = "5000.00")
     private BigDecimal totalRevenue;
+    @Schema(description = "Liczba dostępnych narzędzi", example = "25")
     private Long availableTools;
 
     public StatisticsResponse() {

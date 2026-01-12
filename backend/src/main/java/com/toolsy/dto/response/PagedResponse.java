@@ -1,14 +1,23 @@
 package com.toolsy.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Schema(description = "Odpowiedź paginowana")
 public class PagedResponse<T> {
+    @Schema(description = "Lista elementów na stronie")
     private List<T> content;
+    @Schema(description = "Numer bieżącej strony (0-indexed)", example = "0")
     private int page;
+    @Schema(description = "Rozmiar strony", example = "10")
     private int size;
+    @Schema(description = "Całkowita liczba elementów", example = "100")
     private long totalElements;
+    @Schema(description = "Całkowita liczba stron", example = "10")
     private int totalPages;
+    @Schema(description = "Czy to pierwsza strona", example = "true")
     private boolean first;
+    @Schema(description = "Czy to ostatnia strona", example = "false")
     private boolean last;
 
     public PagedResponse() {
