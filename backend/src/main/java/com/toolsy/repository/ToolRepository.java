@@ -29,5 +29,8 @@ public interface ToolRepository extends JpaRepository<Tool, Long> {
     Page<Tool> searchToolsPageable(@Param("searchTerm") String searchTerm, Pageable pageable);
     
     Page<Tool> findByCategory(String category, Pageable pageable);
+    
+    @Query("SELECT DISTINCT t.category FROM Tool t ORDER BY t.category")
+    List<String> findAllDistinctCategories();
 }
 

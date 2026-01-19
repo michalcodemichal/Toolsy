@@ -159,6 +159,16 @@ public class ToolController {
         return ResponseEntity.ok(tools);
     }
 
+    @GetMapping("/categories")
+    @Operation(summary = "Pobierz wszystkie kategorie", description = "Zwraca listę wszystkich unikalnych kategorii narzędzi")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista kategorii", content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    public ResponseEntity<List<String>> getAllCategories() {
+        List<String> categories = toolService.getAllCategories();
+        return ResponseEntity.ok(categories);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Pobierz szczegóły narzędzia", description = "Zwraca szczegóły narzędzia o podanym ID z opcjonalną informacją o dostępności w okresie")
     @ApiResponses(value = {

@@ -257,6 +257,10 @@ public class ToolService {
         return toolRepository.save(tool);
     }
 
+    public List<String> getAllCategories() {
+        return toolRepository.findAllDistinctCategories();
+    }
+
     private ToolResponse mapToResponse(Tool tool) {
         ToolResponse response = new ToolResponse();
         response.setId(tool.getId());
