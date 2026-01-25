@@ -27,6 +27,9 @@
 ## Funkcjonalności
 
 - ✅ Rejestracja i logowanie użytkowników
+
+
+<br>
 <img width="1922" height="825" alt="image" src="https://github.com/user-attachments/assets/0473927d-89e2-4912-803a-2ef5eafd92bb" />
 <br>
 <img width="1871" height="724" alt="image" src="https://github.com/user-attachments/assets/4df92e2f-740e-4b5c-9641-9d4514b58522" />
