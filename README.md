@@ -31,7 +31,6 @@
 <img width="1922" height="825" alt="image" src="https://github.com/user-attachments/assets/0473927d-89e2-4912-803a-2ef5eafd92bb" />
 <br>
 <br>
-<br>
 <img width="1871" height="724" alt="image" src="https://github.com/user-attachments/assets/4df92e2f-740e-4b5c-9641-9d4514b58522" />
 <br>
 <br>
@@ -41,55 +40,72 @@
 <img width="1247" height="255" alt="image" src="https://github.com/user-attachments/assets/b1e120a0-7375-404a-9626-d32c4dea51a2" />
 <br>
 <br>
-<br>
 <img width="1205" height="75" alt="image" src="https://github.com/user-attachments/assets/fd1e716f-a81f-4adf-bddd-83e7fbaf20b5" />
 <br>
 <br>
 <br>
 - ✅ Przeglądanie katalogu narzędzi
+<br>
 <img width="1902" height="923" alt="image" src="https://github.com/user-attachments/assets/7b2e4ac4-1b96-4ab5-8852-1c2574897a1c" />
-
-
+<br>
+<br>
+<br>
 - ✅ Wyszukiwanie, filtrowanie i sortowanie narzędzi
+<br>
 <img width="1184" height="658" alt="image" src="https://github.com/user-attachments/assets/668291d4-8c65-4824-be3f-180c1ce81872" />
-
-
+<br>
+<br>
+<br>
 - ✅ Wypożyczanie narzędzi
+<br>
 <img width="1151" height="922" alt="image" src="https://github.com/user-attachments/assets/79328f17-de30-412c-a35a-b795f34cfeec" />
-
-
+<br>
+<br>
+<br>
 - ✅ Zarządzanie wypożyczeniami
+<br>
 <img width="1082" height="921" alt="image" src="https://github.com/user-attachments/assets/75e19a60-1d9a-49a0-927e-054c9ddfed1f" />
-
-
+<br>
+<br>
+<br>
 - ✅ Panel administracyjny ze statystykami
+<br>
 <img width="1053" height="517" alt="image" src="https://github.com/user-attachments/assets/c6983b73-41c6-4753-87b1-427a0588d002" />
-
-
+<br>
+<br>
+<br>
 - ✅ Zarządzanie użytkownikami
+<br>
 <img width="1077" height="809" alt="image" src="https://github.com/user-attachments/assets/712e4114-9d03-4952-a035-df7797180835" />
-
-
+<br>
+<br>
+<br>
 - ✅ Zarządzanie narzędziami (CRUD)
+<br>
 <img width="1107" height="915" alt="image" src="https://github.com/user-attachments/assets/4e4553c3-9a52-4c80-844b-248262fdb06d" />
-
-
+<br>
+<br>
+<br>
 - ✅ Upload zdjęć narzędzi
+<br>
 <img width="1069" height="921" alt="image" src="https://github.com/user-attachments/assets/fffa3ee4-c0d0-4765-a389-f7d2e8a71750" />
-
-
+<br>
+<br>
+<br>
 - ✅ System powiadomień asynchronicznych (RabbitMQ)
+<br>
 <img width="845" height="677" alt="image" src="https://github.com/user-attachments/assets/770713be-ed16-4eb8-9495-cf24e4066935" />
-
-
+<br>
+<br>
+<br>
 - ✅ Responsywny design
+<br>
 <img width="793" height="902" alt="image" src="https://github.com/user-attachments/assets/02f059ca-dd82-474d-8041-7b7c15a47bc0" />
-
+<br>
+<br>
 <img width="763" height="921" alt="image" src="https://github.com/user-attachments/assets/edc46c04-5494-4f04-9af2-0e89d745e638" />
-
-
-
-
+<br>
+<br>
 
 ## Wymagania
 
