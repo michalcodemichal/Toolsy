@@ -32,16 +32,22 @@
 <br>
 <img width="1922" height="825" alt="image" src="https://github.com/user-attachments/assets/0473927d-89e2-4912-803a-2ef5eafd92bb" />
 <br>
+
+<br>
 <img width="1871" height="724" alt="image" src="https://github.com/user-attachments/assets/4df92e2f-740e-4b5c-9641-9d4514b58522" />
 <br>
 
 
 - ✅ System ról (USER, ADMIN)
-<p>
-<img width="1247" height="255" alt="image" src="https://github.com/user-attachments/assets/b1e120a0-7375-404a-9626-d32c4dea51a2" />
-</p>
-<img width="1205" height="75" alt="image" src="https://github.com/user-attachments/assets/fd1e716f-a81f-4adf-bddd-83e7fbaf20b5" />
 
+<br>
+<img width="1247" height="255" alt="image" src="https://github.com/user-attachments/assets/b1e120a0-7375-404a-9626-d32c4dea51a2" />
+<br>
+
+
+<br>
+<img width="1205" height="75" alt="image" src="https://github.com/user-attachments/assets/fd1e716f-a81f-4adf-bddd-83e7fbaf20b5" />
+<br>
 
 - ✅ Przeglądanie katalogu narzędzi
 <img width="1902" height="923" alt="image" src="https://github.com/user-attachments/assets/7b2e4ac4-1b96-4ab5-8852-1c2574897a1c" />
