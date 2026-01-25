@@ -27,6 +27,10 @@ public class ToolResponse {
     private LocalDateTime createdAt;
     @Schema(description = "Data ostatniej aktualizacji")
     private LocalDateTime updatedAt;
+    @Schema(description = "Średnia ocena narzędzia", example = "4.5")
+    private Double averageRating;
+    @Schema(description = "Liczba recenzji", example = "12")
+    private Long reviewCount;
 
     public ToolResponse() {
     }
@@ -109,6 +113,22 @@ public class ToolResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Long getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Long reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
 

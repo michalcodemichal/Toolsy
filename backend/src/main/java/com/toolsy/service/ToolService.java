@@ -7,6 +7,7 @@ import com.toolsy.model.Tool;
 import com.toolsy.model.ToolStatus;
 import com.toolsy.model.Rental;
 import com.toolsy.model.RentalStatus;
+import com.toolsy.repository.ReviewRepository;
 import com.toolsy.repository.ToolRepository;
 import com.toolsy.repository.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,13 @@ import java.util.stream.Collectors;
 public class ToolService {
     private final ToolRepository toolRepository;
     private final RentalRepository rentalRepository;
+    private final ReviewRepository reviewRepository;
 
     @Autowired
-    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository) {
+    public ToolService(ToolRepository toolRepository, RentalRepository rentalRepository, ReviewRepository reviewRepository) {
         this.toolRepository = toolRepository;
         this.rentalRepository = rentalRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public ToolResponse createTool(CreateToolRequest request) {
@@ -273,6 +276,9 @@ public class ToolService {
         response.setStatus(tool.getStatus());
         response.setCreatedAt(tool.getCreatedAt());
         response.setUpdatedAt(tool.getUpdatedAt());
+        Double average = reviewRepository.findAverageRatingByToolId(tool.getId());
+        response.setAverageRating(average != null ? average : 0.0);
+        response.setReviewCount(reviewRepository.countByToolId(tool.getId()));
         return response;
     }
 }
