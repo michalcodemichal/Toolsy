@@ -1,6 +1,7 @@
 # Toolsy - Wypożyczalnia Narzędzi
 
 "Toolsy" to projekt aplikacji webowej typu wypożyczalnia narzędzi. Aplikacja umożliwia przeglądanie dostępnych narzędzi, rejestrację i logowanie użytkowników (pełny system autoryzacji), a także zarządzanie katalogiem narzędzi i kategoriami przez administratora. Zalogowani użytkownicy mogą wypożyczać narzędzia oraz zarządzać swoimi wypożyczeniami (w tym dokonywać zwrotów).
+
 <img width="1899" height="918" alt="image" src="https://github.com/user-attachments/assets/f08fec9e-976f-46a7-825b-42ad18f11da3" />
 
 ## Technologie
