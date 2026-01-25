@@ -214,19 +214,20 @@ const ToolDetails = () => {
             </div>
             <div className="flex items-center gap-3">
               <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-md ${
+                (tool.quantity === 0 || tool.status === 'UNAVAILABLE') ? 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300' :
                 tool.status === 'AVAILABLE' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
                 tool.status === 'RENTED' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
                 tool.status === 'MAINTENANCE' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
                 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300'
               }`}>
-                {tool.status === 'AVAILABLE' && '✅ Dostępne'}
-                {tool.status === 'RENTED' && '❌ Wypożyczone'}
-                {tool.status === 'MAINTENANCE' && '🔧 Konserwacja'}
-                {tool.status === 'UNAVAILABLE' && '🚫 Niedostępne'}
+                {(tool.quantity === 0 || tool.status === 'UNAVAILABLE') && '🚫 Niedostępne'}
+                {tool.quantity > 0 && tool.status === 'AVAILABLE' && '✅ Dostępne'}
+                {tool.quantity > 0 && tool.status === 'RENTED' && '❌ Wypożyczone'}
+                {tool.quantity > 0 && tool.status === 'MAINTENANCE' && '🔧 Konserwacja'}
               </span>
             </div>
           </Card>
-          {user && tool.status === 'AVAILABLE' && (
+          {user && tool.status === 'AVAILABLE' && tool.quantity > 0 && (
             <Card variant="gradient">
               {!showRentalForm ? (
                 <Button onClick={() => setShowRentalForm(true)} className="w-full text-lg py-4">

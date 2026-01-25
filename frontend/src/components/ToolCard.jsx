@@ -35,8 +35,11 @@ const ToolCard = ({ tool }) => {
             <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-6xl">🔧</div>
           )}
           <div className="absolute top-3 right-3">
-            <span className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${statusColors[tool.status] || statusColors.UNAVAILABLE}`}>
-              {statusText[tool.status] || 'Niedostępne'}
+            <span className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${
+              (tool.quantity === 0 || tool.status === 'UNAVAILABLE') ? statusColors.UNAVAILABLE :
+              statusColors[tool.status] || statusColors.UNAVAILABLE
+            }`}>
+              {(tool.quantity === 0 || tool.status === 'UNAVAILABLE') ? 'Niedostępne' : (statusText[tool.status] || 'Niedostępne')}
             </span>
           </div>
         </div>
