@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 
-const Input = ({ label, type = 'text', value, onChange, error, placeholder, required = false, className = '', ...props }) => {
+const Input = forwardRef(({ label, type = 'text', value, onChange, error, placeholder, required = false, className = '', ...props }, ref) => {
   const isTextarea = type === 'textarea'
   const inputType = isTextarea ? undefined : type
 
@@ -17,6 +17,7 @@ const Input = ({ label, type = 'text', value, onChange, error, placeholder, requ
       )}
       {isTextarea ? (
         <textarea
+          ref={ref}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
@@ -25,6 +26,7 @@ const Input = ({ label, type = 'text', value, onChange, error, placeholder, requ
         />
       ) : (
         <input
+          ref={ref}
           type={inputType}
           value={value}
           onChange={onChange}
@@ -36,7 +38,9 @@ const Input = ({ label, type = 'text', value, onChange, error, placeholder, requ
       {error && <span className="text-red-500 dark:text-red-400 text-sm mt-1 block">{error}</span>}
     </div>
   )
-}
+})
+
+Input.displayName = 'Input'
 
 export default Input
 

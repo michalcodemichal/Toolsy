@@ -47,6 +47,28 @@
   padding: 3rem;
 }
 
+input[type="date"].date-input-empty::-webkit-datetime-edit,
+input[type="date"].date-input-empty::-webkit-inner-spin-button,
+input[type="date"].date-input-empty::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  pointer-events: none;
+}
+
+input[type="date"].date-input-empty::-webkit-datetime-edit-text {
+  color: transparent;
+}
+
+input[type="date"].date-input-empty::-webkit-datetime-edit-month-field,
+input[type="date"].date-input-empty::-webkit-datetime-edit-day-field,
+input[type="date"].date-input-empty::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+/* Firefox */
+input[type="date"].date-input-empty {
+  color: transparent;
+}
+
 @media (max-width: 768px) {
   .tool-list-container {
     padding: 1rem;
@@ -56,4 +78,3 @@
     grid-template-columns: 1fr;
   }
 }
-

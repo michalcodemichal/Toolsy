@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   getTools,
   searchTools,
@@ -10,6 +10,7 @@ import Input from "../components/Input";
 import Loading from "../components/Loading";
 import Card from "../components/Card";
 import Pagination from "../components/Pagination";
+import "./ToolList.css";
 
 const ToolList = () => {
   const [tools, setTools] = useState([]);
@@ -26,6 +27,8 @@ const ToolList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [allCategories, setAllCategories] = useState([]);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -42,6 +45,15 @@ const ToolList = () => {
     fetchCategories();
   }, []);
 
+  // Debounce search term to prevent too many API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   useEffect(() => {
     const fetchToolsData = async () => {
       setLoading(true);
@@ -53,11 +65,11 @@ const ToolList = () => {
           const toolsArray = Array.isArray(allTools) ? allTools : allTools.content || [];
           
           let filtered = toolsArray;
-          if (searchTerm) {
+          if (debouncedSearchTerm) {
             filtered = filtered.filter(
               (tool) =>
-                tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+                tool.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                tool.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
             );
           }
           if (selectedCategory) {
@@ -92,8 +104,8 @@ const ToolList = () => {
           setTotalPages(Math.ceil(filtered.length / pageSize));
           setTotalElements(filtered.length);
         } else {
-          if (searchTerm) {
-            response = await searchTools(searchTerm, currentPage, pageSize, sortBy, sortOrder);
+          if (debouncedSearchTerm) {
+            response = await searchTools(debouncedSearchTerm, currentPage, pageSize, sortBy, sortOrder);
           } else if (selectedCategory) {
             response = await getToolsByCategory(selectedCategory, currentPage, pageSize, sortBy, sortOrder);
           } else {
@@ -116,24 +128,28 @@ const ToolList = () => {
         setTools([]);
         setTotalPages(0);
         setTotalElements(0);
-      } finally {
-        setLoading(false);
-      }
+    } finally {
+      setLoading(false);
+      setIsInitialLoad(false);
+    }
     };
 
     fetchToolsData();
-  }, [currentPage, pageSize, searchTerm, selectedCategory, sortBy, sortOrder, startDate, endDate]);
+  }, [currentPage, pageSize, debouncedSearchTerm, selectedCategory, sortBy, sortOrder, startDate, endDate]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setSelectedCategory("");
+  const handleSearchChange = useCallback((e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (!value) {
+      setSelectedCategory("");
+    }
     setCurrentPage(0);
-  };
+  }, []);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
@@ -160,7 +176,7 @@ const ToolList = () => {
     setCurrentPage(0);
   };
 
-  if (loading && currentPage === 0) {
+  if (loading && isInitialLoad) {
     return <Loading />;
   }
 
@@ -186,7 +202,7 @@ const ToolList = () => {
                 className="mb-0"
               />
             </div>
-            <div className="relative w-48">
+            <div className="relative min-w-[220px]">
               <input
                 type="date"
                 value={startDate}
@@ -198,17 +214,16 @@ const ToolList = () => {
                   handleDateChange();
                 }}
                 min={new Date().toISOString().split("T")[0]}
-                className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full"
+                className={`px-4 py-3 pr-10 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full ${!startDate ? 'date-input-empty' : ''}`}
                 onFocus={(e) => e.target.showPicker?.()}
-                style={!startDate ? { color: "transparent" } : {}}
               />
               {!startDate && (
-                <label className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none select-none z-10">
+                <label className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none select-none z-20 text-sm whitespace-nowrap">
                   Data rozpoczęcia
                 </label>
               )}
             </div>
-            <div className="relative w-48">
+            <div className="relative min-w-[220px]">
               <input
                 type="date"
                 value={endDate}
@@ -217,12 +232,11 @@ const ToolList = () => {
                   handleDateChange();
                 }}
                 min={startDate || new Date().toISOString().split("T")[0]}
-                className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full"
+                className={`px-4 py-3 pr-10 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100 h-10 w-full ${!endDate ? 'date-input-empty' : ''}`}
                 onFocus={(e) => e.target.showPicker?.()}
-                style={!endDate ? { color: "transparent" } : {}}
               />
               {!endDate && (
-                <label className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none select-none z-10">
+                <label className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none select-none z-20 text-sm whitespace-nowrap">
                   Data zakończenia
                 </label>
               )}
@@ -243,11 +257,11 @@ const ToolList = () => {
             <select
               value={selectedCategory}
               onChange={handleCategoryChange}
-              className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
+              className="px-4 py-2.5 pr-10 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-11 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium leading-tight text-gray-900 dark:text-gray-100 min-w-max w-fit shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-right-2 bg-[length:1.5em]"
             >
               <option value="">📂 Wszystkie kategorie</option>
               {allCategories.map((category) => (
-                <option key={category} value={category}>
+                <option key={category} value={category} title={category}>
                   {category}
                 </option>
               ))}
@@ -255,7 +269,7 @@ const ToolList = () => {
             <select
               value={sortBy}
               onChange={handleSortChange}
-              className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
+              className="px-4 py-2.5 pr-10 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-11 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium leading-tight text-gray-900 dark:text-gray-100 min-w-max w-fit shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-right-2 bg-[length:1.5em]"
             >
               <option value="">🔀 Sortuj</option>
               <option value="name">Nazwa</option>
@@ -266,7 +280,7 @@ const ToolList = () => {
               <select
                 value={sortOrder}
                 onChange={handleSortOrderChange}
-                className="px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-10 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium text-gray-900 dark:text-gray-100"
+                className="px-4 py-2.5 pr-10 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-11 shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all font-medium leading-tight text-gray-900 dark:text-gray-100 min-w-max w-fit shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-right-2 bg-[length:1.5em]"
               >
                 <option value="asc">⬆️ Rosnąco</option>
                 <option value="desc">⬇️ Malejąco</option>
