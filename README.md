@@ -356,6 +356,6 @@ erDiagram
 - User (1) ──< Rental (Many) - Jeden użytkownik może mieć wiele wypożyczeń
 - Tool (1) ──< Rental (Many) - Jedno narzędzie może być wypożyczone wiele razy
 
-## Licencja
 
-Projekt edukacyjny.
+
+
